@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Menu Sample</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+</head>
+<body>
+	<div class="body__wrapper">
+		<header class="header js-menu">
+			<div class="policy header__top mobile-hide js-menu-item" data-menu-order="2">
+				<ul class="policy__list">
+					<li class="policy__item">
+						<a href="/">Privacy policy</a>
+					</li>
+					<li class="policy__item">
+						<a href="/">Guarantee</a>
+					</li>
+				</ul>
+			</div>
+			<div class="menu">
+				<div class="header__logo"><span class="fa fa-cubes"></span></div>
+				<nav class="nav header__nav mobile-hide js-menu-item" data-menu-order="0">
+					<ul class="nav__list">
+						<li class="nav__item"><a href="/">Home</a></li>
+						<li class="nav__item"><a href="#catalog">Catalog</a></li>
+						<li class="nav__item"><a href="#contacts">Contacts</a></li>
+					</ul>
+				</nav>
+				<div class="nav__button mobile-hide js-menu-item" data-menu-order="1">
+					<button class="button" type="button"><span class="fa fa-shopping-cart"></span> Cart</button>
+				</div>
+				<div class="burger header__burger js-menu-trigger">
+					<span class="burger__i"></span>
+					<span class="burger__i"></span>
+					<span class="burger__i"></span>
+				</div>
+			</div>
+		</header>
+		<main>
+			<article>
+				<section>
+					<h2 id="about">ABOUT</h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
+				</section>
+				<section>
+					<h2 id="catalog">CATALOG</h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid
+						consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
+				</section>
+				<section>
+					<h2 id="portfolio">PORTFOLIO</h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid
+						consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
+				</section>
+				<section>
+					<h2 id="contacts">CONTACTS</h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid
+						consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
+				</section>
+			</article>
+		</main>
+		<footer class="footer">FOOTER</footer>
+	</div>
+	<div class="menu-m">
+		<div class="container js-mobile-menu">
+			<div class="menu-m__close js-menu-trigger">
+				<span class="fa fa-times"></span>
+			</div>
+		</div>
+	</div>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+ crossorigin="anonymous"></script>
+ <script src="app.js"></script>
+</body>
+</html>
