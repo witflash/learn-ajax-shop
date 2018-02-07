@@ -5,84 +5,96 @@
 			"category": "Fast",
 			"price": 100,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495636.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"
 		},
 		{
 			"name": "Felix",
 			"category": "Fast",
 			"price": 200,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495625.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "skyblue"			
 		},
 		{
 			"name": "Luna",
 			"category": "Slow",
 			"price": 50,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495622.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Oliver",
 			"category": "Fast",
 			"price": 75,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495619.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Oreo",
 			"category": "Fast",
 			"price": 125,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495616.svg",
-			"is_available": true
+			"is_available": false,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Molly",
 			"category": "Slow",
 			"price": 75,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495613.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Simba",
 			"category": "Fast",
 			"price": 199,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495592.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Jack",
 			"category": "Fast",
 			"price": 110,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/495579.svg",
-			"is_available": true
+			"is_available": false,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Toby",
 			"category": "Slow",
 			"price": 80,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/290987.png",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Loki",
 			"category": "Fast",
 			"price": 180,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/336916.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Milo",
 			"category": "Slow",
 			"price": 99,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/336916.svg",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		},
 		{
 			"name": "Harley",
 			"category": "Fast",
 			"price": 200,
 			"img_url": "https://storage.googleapis.com/ck-kitty-image/0x06012c8cf97bead5deae237070f9587f8e7a266d/389188.png",
-			"is_available": true
+			"is_available": true,
+			"color": "lightgreen"			
 		}
 	]
 }

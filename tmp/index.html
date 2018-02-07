@@ -31,8 +31,10 @@
 					</ul>
 				</nav>
 				<div class="nav__button mobile-hide js-menu-item" data-menu-order="1">
-					<button class="button" type="button"><span class="fa fa-shopping-cart"></span> Cart</button>
+					<button class="button js-cart-open" type="button"><span class="fa fa-shopping-cart"></span> Cart</button>
+					<span class="amount js-cart-amount" data-amount='0'>0</span>
 				</div>
+
 				<div class="burger header__burger js-menu-trigger">
 					<span class="burger__i"></span>
 					<span class="burger__i"></span>
@@ -41,27 +43,9 @@
 			</div>
 		</header>
 		<main>
-			<article>
-				<section>
-					<h2 id="about">ABOUT</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
-				</section>
-				<section>
-					<h2 id="catalog">CATALOG</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid
-						consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
-				</section>
-				<section>
-					<h2 id="portfolio">PORTFOLIO</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid
-						consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
-				</section>
-				<section>
-					<h2 id="contacts">CONTACTS</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Libero earum nihil soluta, itaque molestiae tempore tempora aliquid
-						consequatur repellat exercitationem esse id! Eligendi provident fugit temporibus id, laborum numquam alias.</p>
-				</section>
-			</article>
+			<div class="catalog">
+				
+			</div>
 		</main>
 		<footer class="footer">FOOTER</footer>
 	</div>
@@ -72,8 +56,20 @@
 			</div>
 		</div>
 	</div>
-<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
- crossorigin="anonymous"></script>
- <script src="app.js"></script>
+
+<div style="display: none" id="cat-template">
+	<div class="cat catalog__item" data-cat=''>
+		<div class="cat__photo">
+			<img class="cat__img" width="200px" height="200px" src="" alt="a cat">
+			<div class="cat__price"></div>
+		</div>
+		<div class="cat__info">
+			<div class="cat__name"></div>
+			<div class="cat__category"></div>
+		</div>
+	</div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
