@@ -3,6 +3,24 @@
 // LocalStorage
 // if not get than 0, if set than set key
 // add expired
+
+// localStorage.clear();
+
+function setCart(value) {
+	localStorage.setItem('userCart', value);
+}
+
+var userCart = localStorage.getItem('userCart');
+
+if (!userCart) {
+	console.log('No userCart');
+	setCart(0);
+}
+setCart(+userCart + 1);
+console.log(userCart);
+
+
+
 var cartCount = 0;
 var cart = {};
 

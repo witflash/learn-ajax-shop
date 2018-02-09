@@ -156,7 +156,7 @@ main {
 
 .cat__price {
 	position: absolute;
-	top: 4em;
+	top: 45px;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	padding: 5px 10px;
@@ -168,6 +168,10 @@ main {
 .cat__price::before {
 	content: 'For Sale: ';
 	font-weight: bold;
+}
+
+.cat__price::after {
+	content: '$';
 }
 
 .cat__info {
