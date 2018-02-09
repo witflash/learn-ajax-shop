@@ -67,16 +67,19 @@ function addToCart(index) {
 	};	
 }
 
-function cartOpen() {
+function cartToggle() {
 	// @TODO
 	// add modal window with nice view
-	alert(cart);
+	let cartWindow = document.querySelector('.cart');
+	console.log(cartWindow);
+	cartWindow.classList.toggle('cart_visible');	
 }
 
 // @TODO learn how to write eventListener (iLya)
 //eventListening('click', init.cartOpen(){});
 //document.addEventListener('click',cartOpen());
-document.querySelector('.js-cart-open').addEventListener('click', cartOpen);
+document.querySelector('.js-cart-toggle').addEventListener('click', cartToggle);
+document.querySelector('.js-cart-close').addEventListener('click', cartToggle);
 
 requestItems(createItems);
 
@@ -95,51 +98,3 @@ requestItems(createItems);
 // cats.forEach( function(item, i) {
 // 	item.addEventListener
 // })
-
-
-
-
-
-
-
-
-
-
-///////////////////
-//  BURGER MENU  //
-///////////////////
-
-(function ($, window, document) {
-
-	$(function () {
-	  menu.init();
-	});
-  
-	var menu = {
-	  $el : $('.js-menu'),
-	  triggerClass: '.js-menu-trigger',
-	  init: function() {
-		if (!this.$el.length) return;
-		$(this.triggerClass).on('click', this.toggle);
-		this.clone();
-	  },
-	  toggle: function() {
-		$('html').toggleClass('menu-open');
-	  },
-	  clone: function() {
-			var menuMobile = '.js-mobile-menu',
-				menuItems = '.js-menu-item',
-				wrapper = 'menu-m__item';
-		
-			$(menuItems).clone()
-						.sort(compare)
-						.removeClass()
-						.addClass(wrapper)
-						.appendTo(menuMobile);
-		
-			function compare(a, b) {
-				return ($(a).data('menu-order') - $(b).data('menu-order'));
-			}
-	  }
-	}
-}(window.jQuery, window, document));
