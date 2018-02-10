@@ -132,3 +132,56 @@ document.querySelector('.js-cart-close').addEventListener('click', cartToggle);
 // with increase count/decrease count/remove (+)(x)
 // input type="number"
 // BEST: custom (-)______(+) (x)
+
+var infinityScroll = {
+	scrollZone: document.querySelector('.js-on-scroll'),
+	scrollClassActive: 'infinity-scroll_active',
+	scrollOffset: 0,
+
+	init: function() {
+		let self = this;
+		window.onload = function() {
+			self.setOffset();
+			document.addEventListener('scroll', function() { self.onScrollZone() });
+		}
+	},
+
+	setOffset: function() {
+		this.scrollOffset = this.scrollZone.dataset.offset;
+	},
+
+	getNextScroll: function() {
+		let allZone = document.querySelectorAll('.js-on-scroll');
+		let nextZone = 1;
+	},
+
+	onScrollZone: function() {
+		let elementTop = this.getScrollTop();
+		if (elementTop >= this.scrollOffset) {
+			this.scrollZone.classList.add(this.scrollClassActive);
+		}
+	},
+
+	getScrollTop: function() {
+		let scrollTop = this.scrollZone.getBoundingClientRect().y;
+		let screenHeight = this.scrollZone.clientHeight;
+		return screenHeight - scrollTop;
+	}
+}
+
+// function onScrollZone() {
+// 	console.log(this);
+// 	let positionY = getElementTop(scrollZone);
+// 	if (positionY >= 300) {
+// 		scrollZone.classList.add('infinity-scroll_active');
+// 	}
+// }
+
+// function getElementTop(element) {
+// 	let scrollTop = element.getBoundingClientRect().y;
+// 	let screenHeight = element.clientHeight;
+// 	return screenHeight - scrollTop;
+// }
+
+
+infinityScroll.init();
