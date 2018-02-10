@@ -24,7 +24,7 @@
 				</nav>
 				<div class="nav__button" data-menu-order="1">
 					<button class="button js-cart-toggle" type="button"><span class="fa fa-shopping-cart"></span> Cart</button>
-					<span class="amount js-cart-amount" data-amount='0'>0</span>
+					<span class="amount js-cart-amount"></span>
 				</div>
 
 			</div>
@@ -42,18 +42,9 @@
 
 	</div>
 	
-	<div class="cart">
-		<div class="cart__header">
-			<div class="cart__title">Cart</div>
-			<div class="cart__close js-cart-close">X</div>
-		</div>
-		<div class="cart__body">No items in the Cart :(</div>
-	</div>
-
-
 
 	<div style="display: none" id="cat-template">
-		<div class="cat catalog__item" data-cat=''>
+		<div class="cat catalog__item">
 			<div class="cat__photo">
 				<img class="cat__img" width="200px" height="200px" src="" alt="a cat">
 				<div class="cat__price"></div>
@@ -65,6 +56,20 @@
 		</div>
 	</div>
 
+	<div class="cart">
+		<div class="cart__header">
+			<div class="cart__title">Cart</div>
+			<div class="cart__close js-cart-close">X</div>
+		</div>
+		<div class="cart__body"></div>
+	</div>
+
+	<div style="display: none" id="cart-item-template">
+		<div class="cart__item">
+			<div class="cart__name"></div>
+			<div class="cart__amount"></div>
+		</div>
+	</div>
 
 </div>
 

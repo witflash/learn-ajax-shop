@@ -1,37 +1,5 @@
 'use strict';
-// @TODO
-// LocalStorage
-// if not get than 0, if set than set key
-// add expired
 
-// localStorage.clear();
-
-function setCart(value) {
-	localStorage.setItem('userCart', value);
-}
-
-var userCart = localStorage.getItem('userCart');
-
-if (!userCart) {
-	console.log('No userCart');
-	setCart(0);
-}
-setCart(+userCart + 1);
-console.log(userCart);
-
-
-
-var cartCount = 0;
-var cart = {};
-
-// @TODO
-// show object as a string
-// cart.toString
-
-/**
- * Request data from json file 
- * @param {Function} cb - add items on page
- */
 function requestItems(cb) {
 	var request = new XMLHttpRequest();
 	request.open('GET', 'data.json', true);
@@ -55,64 +23,112 @@ function createItems(data) {
 }
 
 function createItem(data, index) {
-	let item = document.getElementById('cat-template').children[0].cloneNode(true);
+	let item = document.getElementById('cat-template').firstElementChild.cloneNode(true);
 
 	item.querySelector('.cat__name').innerHTML = data.name;
 	item.querySelector('.cat__category').innerHTML = data.category;
 	item.querySelector('.cat__price').innerHTML = data.price;
 	item.querySelector('.cat__img').setAttribute("src", data.img_url);
-	item.setAttribute("data-index", index);
+	item.dataset.index = data.id;
 
 	item.addEventListener('click', handleClick);
 
 	return item;
 }
 
-function handleClick() {
-	var index = this.getAttribute('data-index');
-	addToCart(index);
+function createCartItem (index, name, amount) {
+	let cartItem = document.getElementById('cart-item-template').firstElementChild.cloneNode(true);
+	let cartBody = document.querySelector('.cart__body');
+
+	cartItem.dataset.cartIndex = index;
+	cartItem.querySelector('.cart__name').innerHTML = name;
+	cartItem.querySelector('.cart__amount').innerHTML = amount;
+	
+	if (cartBody.innerHTML == emptyCartText) {
+		cartBody.innerHTML = '';
+	} 
+	cartBody.appendChild(cartItem);
 }
 
-function addToCart(index) {
-	// increase cart count
+function renderCartAmount (amount, index) {
+	let cartItem = document.querySelector('[data-cart-index=\"' + index + '\"]');
+	cartItem.querySelector('.cart__amount').innerHTML = amount;
+}
+
+function handleClick() {
+	let index = this.getAttribute('data-index');
+	let name = this.querySelector('.cat__name').textContent;
+	addToCart(index, name);
+}
+
+function addToCart(index, name) {
 	cartCount++;
+	localCache.set.count(cartCount);
 	document.querySelector('.js-cart-amount').textContent = cartCount;
 	index = '#' + index;	
 	if (cart[index]) {
-		cart[index]++;
+		cart[index].amount++;
+		renderCartAmount(cart[index].amount, index);
 	} else {
-		cart[index] = 1;
-	};	
+		cart[index] = {'name': name, 'amount': 1};
+		createCartItem(index, name, 1);
+	};
 }
 
 function cartToggle() {
-	// @TODO
-	// add modal window with nice view
 	let cartWindow = document.querySelector('.cart');
-	console.log(cartWindow);
 	cartWindow.classList.toggle('cart_visible');	
 }
 
-// @TODO learn how to write eventListener (iLya)
-//eventListening('click', init.cartOpen(){});
-//document.addEventListener('click',cartOpen());
+
+// @TODO
+// LocalStorage
+// if not get than 0, if set than set key
+// add expired
+
+// localStorage.clear();
+
+var localCache = {
+	get: {
+		cart: localStorage.getItem('userCartList'),
+		count: localStorage.getItem('userCartCount')
+	},
+	set: {
+		cart: function (list) {
+			localStorage.setItem('userCartList', list)
+		},
+		count: function(value) {
+			localStorage.setItem('userCartCount', value)
+		}
+	}
+}
+
+
+var emptyCartText = "No item in the cart :(<br>Please add the item(s) in the catalog.";
+var cartCount = localCache.get.count || 0;
+
+var cart = {
+	toString: function() {
+		return JSON.stringify(this)
+	}
+};
+
+if (!cartCount) {
+	document.querySelector('.cart__body').innerHTML = emptyCartText;
+};
+
+
+requestItems(createItems);
 document.querySelector('.js-cart-toggle').addEventListener('click', cartToggle);
 document.querySelector('.js-cart-close').addEventListener('click', cartToggle);
 
-requestItems(createItems);
+
+// @TODO
+// show object as a string
+// cart.toString
 
 // @TODO
 // add template for cart items
 // with increase count/decrease count/remove (+)(x)
 // input type="number"
 // BEST: custom (-)______(+) (x)
-
-
-
-
-// var cats = document.querySelectorAll('[data-cat]');
-// console.log(cats);
-
-// cats.forEach( function(item, i) {
-// 	item.addEventListener
-// })
