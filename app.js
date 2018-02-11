@@ -185,7 +185,10 @@ var infinityScroll = {
 
 	onScrollZone: function() {
 		let elementTop = this.getScrollTop();
+		console.log('elementTop', elementTop);
 		if (elementTop >= -this.scrollOffset) {
+			document.removeEventListener('scroll', this.onScrollZone);
+			console.log('Remove Event Listener');
 			requestItems(createItems);			
 			// this.loadContent();
 			// this.setNextScroll();
