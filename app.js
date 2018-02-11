@@ -1,12 +1,18 @@
 'use strict';
 
+var setting = {
+	jsonPage: 1,
+	jsonPerPage: 20
+};
+
 function requestItems(cb) {
 	var request = new XMLHttpRequest();
-	request.open('GET', 'data.json', true);
+	request.open('GET', `https://ma-cats-api.herokuapp.com/api/cats?page=${setting.jsonPage}&per_page=${setting.jsonPerPage}`, true);
 	request.onload = function () {
 		if (request.status >= 200 && request.status < 400) {
 			var data = JSON.parse(request.responseText);
 			cb(data);
+			setting.jsonPage++;
 		} else {
 		}
 	};
@@ -179,21 +185,27 @@ var infinityScroll = {
 
 	onScrollZone: function() {
 		let elementTop = this.getScrollTop();
-		if (elementTop >= this.scrollOffset) {
-			this.loadContent();
-			this.setNextScroll();
+		if (elementTop >= -this.scrollOffset) {
+			requestItems(createItems);			
+			// this.loadContent();
+			// this.setNextScroll();
 		}
 	},
 
-	moveScroll: function() {
-		let newScroll = document.querySelector(this.scrollClass);
-		document.querySelector('main').appendChild(newScroll);
-	},
+	// moveScroll: function() {
+	// 	let self = this;
+	// 	let currentScroll = document.querySelector(this.scrollClass);
+	// 	let newScroll = currentScroll.cloneNode();
+	// 	currentScroll.remove();
+	// 	window.onload = function() {
+	// 		console.log('All resources loaded');
+	// 		document.querySelector('main').appendChild(self.moveScroll.newScroll);
+	// 		};
+	// },
 	
 	loadContent: function() {
-		let part = document.querySelector('.catalog').cloneNode(true);
-		document.querySelector('main').appendChild(part);
-		this.moveScroll();
+		requestItems(createItems);
+		// this.moveScroll();
 	}
 }
 
