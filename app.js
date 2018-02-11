@@ -133,55 +133,74 @@ document.querySelector('.js-cart-close').addEventListener('click', cartToggle);
 // input type="number"
 // BEST: custom (-)______(+) (x)
 
+
 var infinityScroll = {
-	scrollZone: document.querySelector('.js-on-scroll'),
-	scrollClassActive: 'infinity-scroll_active',
+	scrollClass: '.js-on-scroll',
+	scrollZone: {},
 	scrollOffset: 0,
-
+	
 	init: function() {
-		let self = this;
-		window.onload = function() {
-			self.setOffset();
-			document.addEventListener('scroll', function() { self.onScrollZone() });
-		}
+		this.setNextScroll();
 	},
-
+	
 	setOffset: function() {
 		this.scrollOffset = this.scrollZone.dataset.offset;
 	},
-
-	getNextScroll: function() {
-		let allZone = document.querySelectorAll('.js-on-scroll');
-		let nextZone = 1;
+	
+	setScrollZone: function() {
+		let allZones = document.querySelectorAll(this.scrollClass);
+		if (allZones) {
+			this.scrollZone = allZones[allZones.length - 1];
+		} else {
+			this.scrollZone = null;
+		}
 	},
-
-	onScrollZone: function() {
-		let elementTop = this.getScrollTop();
-		if (elementTop >= this.scrollOffset) {
-			this.scrollZone.classList.add(this.scrollClassActive);
+	
+	setNextScroll: function() {
+		let self = this;
+		window.onload = function() {
+			self.setScrollZone();
+			if (!self.scrollZone) {
+				console.log('There is no infinity scroll on the page');
+				return;
+			}
+			if (!self.scrollOffset) {
+				self.setOffset();
+			};
+			document.addEventListener('scroll', function() { self.onScrollZone() });
 		}
 	},
 
 	getScrollTop: function() {
 		let scrollTop = this.scrollZone.getBoundingClientRect().y;
-		let screenHeight = this.scrollZone.clientHeight;
+		let screenHeight = document.documentElement.clientHeight;
 		return screenHeight - scrollTop;
+	},
+
+	onScrollZone: function() {
+		let elementTop = this.getScrollTop();
+		if (elementTop >= this.scrollOffset) {
+			this.loadContent();
+			this.setNextScroll();
+		}
+	},
+
+	moveScroll: function() {
+		let newScroll = document.querySelector(this.scrollClass);
+		document.querySelector('main').appendChild(newScroll);
+	},
+	
+	loadContent: function() {
+		let part = document.querySelector('.catalog').cloneNode(true);
+		document.querySelector('main').appendChild(part);
+		this.moveScroll();
 	}
 }
 
-// function onScrollZone() {
-// 	console.log(this);
-// 	let positionY = getElementTop(scrollZone);
-// 	if (positionY >= 300) {
-// 		scrollZone.classList.add('infinity-scroll_active');
-// 	}
-// }
-
-// function getElementTop(element) {
-// 	let scrollTop = element.getBoundingClientRect().y;
-// 	let screenHeight = element.clientHeight;
-// 	return screenHeight - scrollTop;
-// }
+function loadMoreContent() {
+	let bodyContent = document.querySelector('main');
+	let nextContent = document.querySelector('.catalog').cloneNode(true);
+}
 
 
 infinityScroll.init();

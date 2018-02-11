@@ -266,11 +266,5 @@ main {
 
 
 .infinity-scroll {
-	width: 100%;
-	height: 100vh;
-	background-color: tomato;
-}
-
-.infinity-scroll_active {
-	background-color: green;
+	height: 0;
 }
