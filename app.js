@@ -144,6 +144,7 @@ var infinityScroll = {
 	scrollClass: '.js-on-scroll',
 	scrollZone: {},
 	scrollOffset: 0,
+	throttling: 250,
 	
 	init: function() {
 		this.setNextScroll();
@@ -154,12 +155,8 @@ var infinityScroll = {
 	},
 	
 	setScrollZone: function() {
-		let allZones = document.querySelectorAll(this.scrollClass);
-		if (allZones) {
-			this.scrollZone = allZones[allZones.length - 1];
-		} else {
-			this.scrollZone = null;
-		}
+		let scrollZone = document.querySelector(this.scrollClass);
+		this.scrollZone = scrollZone ? scrollZone : null;
 	},
 	
 	setNextScroll: function() {
@@ -178,30 +175,27 @@ var infinityScroll = {
 	},
 
 	eventScroll: function() {
-		document.addEventListener('scroll', this.throttle(this.onScrollZone.bind(this), 250));
+		document.addEventListener('scroll', this.throttle(this.onScrollZone.bind(this), this.throttling));
 	},
 
 	throttle: function (func, limit) {
 		let inThrottle;
-		console.log(this)
 		let self = this.throttle;
 		return function () {
 			const args = arguments;
 			const context = self;
-			console.log('inThrottle', inThrottle)
 			if (!inThrottle) {
-				// setTimeout(func, limit);
-				// inThrottle = true;
-				// console.log('inThrottle', inThrottle)
 				func.apply(context, args);
 				inThrottle = true;
 				setTimeout(() => inThrottle = false, limit);
 			} 
-			// else {
-			// 	clearTimeout(func, limit);
-			// 	console.log('Throttling...')
-			// 	inThrottle = false;
-			// }
+		}
+	},
+
+	onScrollZone: function() {
+		let elementTop = this.getScrollTop();
+		if (elementTop >= -this.scrollOffset) {
+			requestItems(createItems);			
 		}
 	},
 
@@ -209,42 +203,8 @@ var infinityScroll = {
 		let scrollTop = this.scrollZone.getBoundingClientRect().y;
 		let screenHeight = document.documentElement.clientHeight;
 		return screenHeight - scrollTop;
-	},
+	}
 
-	onScrollZone: function() {
-		console.log('this', this)
-		let elementTop = this.getScrollTop();
-		console.log('elementTop', elementTop);
-		if (elementTop >= -this.scrollOffset) {
-			// document.removeEventListener('scroll', this.onScrollZone);
-			// console.log('Remove Event Listener');
-			requestItems(createItems);			
-			// this.loadContent();
-			// this.setNextScroll();
-		}
-	},
-
-	// moveScroll: function() {
-	// 	let self = this;
-	// 	let currentScroll = document.querySelector(this.scrollClass);
-	// 	let newScroll = currentScroll.cloneNode();
-	// 	currentScroll.remove();
-	// 	window.onload = function() {
-	// 		console.log('All resources loaded');
-	// 		document.querySelector('main').appendChild(self.moveScroll.newScroll);
-	// 		};
-	// },
-	
-	// loadContent: function() {
-	// 	requestItems(createItems);
-		// this.moveScroll();
-	// }
 }
-
-// function loadMoreContent() {
-// 	let bodyContent = document.querySelector('main');
-// 	let nextContent = document.querySelector('.catalog').cloneNode(true);
-// }
-
 
 infinityScroll.init();
