@@ -1,18 +1,113 @@
 'use strict';
 
-var setting = {
+var _setting = {
 	jsonPage: 1,
-	jsonPerPage: 30
+	jsonPerPage: 30,
+	emptyCartText: "No item in the cart :(<br>Please add the item(s) to the catalog.",
+};
+
+var _storage = {
+	get: {
+		cart: localStorage.getItem('userCartList'),
+		count: localStorage.getItem('userCartCount')
+	},
+	set: {
+		cart: function (list) {
+			localStorage.setItem('userCartList', list)
+		},
+		count: function(value) {
+			localStorage.setItem('userCartCount', value)
+		}
+	}
+};
+
+var cart = {
+	count: 0,
+	body: document.querySelector('.cart__body'),
+	itemTemplate: document.getElementById('cart-item-template').firstElementChild,
+
+	amount: {
+		bubble: document.querySelector('.js-cart-amount'),
+		isVisible: function () {
+			this.bubble.classList.add('amount_visible');
+		}
+	},
+	
+	items: {},
+
+	init: function() {
+		let nodeToggle = document.querySelector('.js-cart-toggle');
+		let nodeClose = document.querySelector('.js-cart-close');
+		if (_storage.get.count) {
+			this.count = _storage.get.count;
+			this.amount.bubble.textContent = this.count;			
+			this.amount.isVisible();
+		}
+		if (_storage.get.cart) {
+			this.items = JSON.parse(_storage.get.cart);
+			for (let id in this.items) {
+				this.renderItem(id, this.items[id].name, this.items[id].amount);
+			}
+		};
+		this.items.toString = function() {
+			return JSON.stringify(this)
+		};
+
+		if (!this.count) {
+			this.body.innerHTML = _setting.emptyCartText;
+		};
+		nodeToggle.addEventListener('click', this.toggle);
+		nodeClose.addEventListener('click', this.toggle);
+	},
+
+	addItem: function (index, name) {
+		console.log('this', this)
+		this.count++;
+		_storage.set.count(this.count);
+		this.amount.bubble.textContent = this.count;
+		this.amount.isVisible();		
+		index = '#' + index;
+		if (this.items[index]) {
+			this.items[index].amount++;
+			this.renderItemAmount(this.items[index].amount, index);
+		} else {
+			this.items[index] = {'name': name, 'amount': 1};
+			this.renderItem(index, name, 1);
+		};
+		_storage.set.cart(this.items.toString());
+	},
+
+	renderItemAmount: function (amount, index) {
+		let cartItem = document.querySelector('[data-cart-index=\"' + index + '\"]');
+		cartItem.querySelector('.cart__amount').innerHTML = amount;
+	},
+
+	renderItem: function (index, name, amount) {
+		let cartItem = this.itemTemplate.cloneNode(true);
+		cartItem.dataset.cartIndex = index;
+		cartItem.querySelector('.cart__name').innerHTML = name;
+		cartItem.querySelector('.cart__amount').innerHTML = amount;
+		
+		if (this.body.innerHTML == _setting.emptyCartText) {
+			this.body.innerHTML = '';
+		} 
+		this.body.appendChild(cartItem);
+	},
+
+	toggle: function () {
+		let cartWindow = document.querySelector('.cart');
+		cartWindow.classList.toggle('cart_visible');	
+	}
 };
 
 function requestItems(cb) {
 	var request = new XMLHttpRequest();
-	request.open('GET', `https://ma-cats-api.herokuapp.com/api/cats?page=${setting.jsonPage}&per_page=${setting.jsonPerPage}`, true);
+	request.open('GET', `https://ma-cats-api.herokuapp.com/api/cats?page=${_setting.jsonPage}&per_page=${_setting.jsonPerPage}`, true);
 	request.onload = function () {
 		if (request.status >= 200 && request.status < 400) {
 			var data = JSON.parse(request.responseText);
 			cb(data);
-			setting.jsonPage++;
+			_setting.jsonPage++;
 		} else {
 		}
 	};
@@ -43,48 +138,10 @@ function createItem(data, index) {
 	return item;
 }
 
-function createCartItem (index, name, amount) {
-	let cartItem = document.getElementById('cart-item-template').firstElementChild.cloneNode(true);
-	let cartBody = document.querySelector('.cart__body');
-
-	cartItem.dataset.cartIndex = index;
-	cartItem.querySelector('.cart__name').innerHTML = name;
-	cartItem.querySelector('.cart__amount').innerHTML = amount;
-	
-	if (cartBody.innerHTML == emptyCartText) {
-		cartBody.innerHTML = '';
-	} 
-	cartBody.appendChild(cartItem);
-}
-
-function renderCartAmount (amount, index) {
-	let cartItem = document.querySelector('[data-cart-index=\"' + index + '\"]');
-	cartItem.querySelector('.cart__amount').innerHTML = amount;
-}
-
 function handleClick() {
 	let index = this.getAttribute('data-index');
 	let name = this.querySelector('.cat__name').textContent;
-	addToCart(index, name);
-}
-
-function addToCart(index, name) {
-	cartCount++;
-	localCache.set.count(cartCount);
-	document.querySelector('.js-cart-amount').textContent = cartCount;
-	index = '#' + index;	
-	if (cart[index]) {
-		cart[index].amount++;
-		renderCartAmount(cart[index].amount, index);
-	} else {
-		cart[index] = {'name': name, 'amount': 1};
-		createCartItem(index, name, 1);
-	};
-}
-
-function cartToggle() {
-	let cartWindow = document.querySelector('.cart');
-	cartWindow.classList.toggle('cart_visible');	
+	cart.addItem(index, name);
 }
 
 
@@ -92,43 +149,6 @@ function cartToggle() {
 // LocalStorage
 // if not get than 0, if set than set key
 // add expired
-
-// localStorage.clear();
-
-var localCache = {
-	get: {
-		cart: localStorage.getItem('userCartList'),
-		count: localStorage.getItem('userCartCount')
-	},
-	set: {
-		cart: function (list) {
-			localStorage.setItem('userCartList', list)
-		},
-		count: function(value) {
-			localStorage.setItem('userCartCount', value)
-		}
-	}
-}
-
-
-var emptyCartText = "No item in the cart :(<br>Please add the item(s) in the catalog.";
-var cartCount = localCache.get.count || 0;
-
-var cart = {
-	toString: function() {
-		return JSON.stringify(this)
-	}
-};
-
-if (!cartCount) {
-	document.querySelector('.cart__body').innerHTML = emptyCartText;
-};
-
-
-requestItems(createItems);
-document.querySelector('.js-cart-toggle').addEventListener('click', cartToggle);
-document.querySelector('.js-cart-close').addEventListener('click', cartToggle);
-
 
 // @TODO
 // show object as a string
@@ -174,11 +194,11 @@ var infinityScroll = {
 			self.eventScroll();
 		}
 	},
-
+	
 	eventScroll: function() {
 		document.addEventListener('scroll', this.throttle(this.onScrollZone.bind(this), this.throttling));
 	},
-
+	
 	throttle: function (func, limit) {
 		let inThrottle;
 		let self = this.throttle;
@@ -192,20 +212,23 @@ var infinityScroll = {
 			} 
 		}
 	},
-
+	
 	onScrollZone: function() {
 		let elementTop = this.getScrollTop();
 		if (elementTop >= -this.scrollOffset) {
 			requestItems(createItems);			
 		}
 	},
-
+	
 	getScrollTop: function() {
 		let scrollTop = this.scrollZone.getBoundingClientRect().y;
 		let screenHeight = document.documentElement.clientHeight;
 		return screenHeight - scrollTop;
 	}
-
+	
 }
 
+
+requestItems(createItems);
+cart.init();
 infinityScroll.init();

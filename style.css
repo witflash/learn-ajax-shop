@@ -27,8 +27,15 @@ main {
 	box-shadow: 0 0 10px rgba(0,0,0,0.7);
 }
 
-.header__top {
-	text-align: right;
+.header__logo {
+	flex: 1 0 auto;
+	padding: 10px;
+	font-size: 2em;
+	color: #ff5c8d;
+}
+
+.header__nav {
+	flex: 1 0 auto;
 }
 
 .header__menu {
@@ -50,10 +57,11 @@ main {
 } 
 
 .nav {
-	display: flex;
 }
 
 .nav__list {
+	display: flex;
+	justify-content: space-around;
 	margin: 0;
 	padding: 0;
 	display: flex;
@@ -63,14 +71,14 @@ main {
 }
 
 .nav__item {
-	flex: 1 0 auto;
-	padding-right: 10px;
+	padding: 0 1em;
 	text-align: center;
 	transition-duration: 300ms;	
 }
 
-.nav__item:last-child {
-	padding-right: 0;
+.nav__item a {
+	display: block;
+	width: 100%;
 }
 
 .nav__button {
@@ -92,15 +100,6 @@ main {
 	opacity: 0.8;
 }
 
-.header__logo {
-	padding: 10px;
-	font-size: 2em;
-	color: #ff5c8d;
-}
-
-.header__nav {
-	flex: 1;
-}
 
 .mobile-show {
 	display: none;
@@ -120,8 +119,8 @@ main {
 
 .amount {
 	position: absolute;
-	bottom: 0;
-	right: 0;
+	bottom: -10px;
+	right: -10px;
 	padding: 1px;
 	background: white;
 	font-size: 14px;
@@ -134,6 +133,12 @@ main {
 	text-align: center;
 	line-height: 25px;
 	box-shadow: 0 0 5px rgba(0,0,0,0.4);
+	transform: scale(0);
+	transition-duration: 300ms;
+}
+
+.amount_visible {
+	transform: scale(1);	
 }
 
 .catalog {
@@ -230,7 +235,7 @@ main {
 	width: 250px;
 	background-color: white;	
 	box-shadow: -5px 5px 10px rgba(0,0,0,0.3), 0 0 10px rgba(0,0,0,0.3);
-	transition: 300ms;
+	transition-duration: 300ms;
 }
 
 .cart__header {
