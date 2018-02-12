@@ -1,12 +1,12 @@
 'use strict';
 
-var _setting = {
+const _setting = {
 	jsonPage: 1,
 	jsonPerPage: 30,
 	emptyCartText: "No item in the cart :(<br>Please add the item(s) to the catalog.",
 };
 
-var _storage = {
+const _storage = {
 	get: {
 		cart: localStorage.getItem('userCartList'),
 		count: localStorage.getItem('userCartCount')
@@ -18,10 +18,11 @@ var _storage = {
 		count: function(value) {
 			localStorage.setItem('userCartCount', value)
 		}
-	}
+	},
+	lastChange: new Date()
 };
 
-var cart = {
+const cart = {
 	count: 0,
 	body: document.querySelector('.cart__body'),
 	itemTemplate: document.getElementById('cart-item-template').firstElementChild,
@@ -147,15 +148,9 @@ function handleClick() {
 
 // @TODO
 // LocalStorage
-// if not get than 0, if set than set key
 // add expired
 
 // @TODO
-// show object as a string
-// cart.toString
-
-// @TODO
-// add template for cart items
 // with increase count/decrease count/remove (+)(x)
 // input type="number"
 // BEST: custom (-)______(+) (x)
