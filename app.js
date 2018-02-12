@@ -35,6 +35,7 @@ function createItem(data, index) {
 	item.querySelector('.cat__category').innerHTML = data.category;
 	item.querySelector('.cat__price').innerHTML = data.price;
 	item.querySelector('.cat__img').setAttribute("src", data.img_url);
+	item.querySelector('.cat__img').setAttribute("alt", data.name + ' img');
 	item.dataset.index = data.id;
 
 	item.addEventListener('click', handleClick);

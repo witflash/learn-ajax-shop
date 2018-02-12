@@ -17,7 +17,6 @@ p {
 
 main {
 	padding: 5em 0 2em 0;
-	z-index: 0;
 }
 
 .header {
@@ -67,7 +66,7 @@ main {
 	flex: 1 0 auto;
 	padding-right: 10px;
 	text-align: center;
-	transition-duration: 0.3s;	
+	transition-duration: 300ms;	
 }
 
 .nav__item:last-child {
@@ -110,8 +109,9 @@ main {
 .footer {
 	position: fixed;
 	bottom: 0;
-	width: 100%;
-	padding: 0.5em;
+	/* width: 100%; */
+	padding: 0.5em 1.5em;
+	border-top-right-radius: 1em;
 	background-color: var(--color-main);
 	font-size: 0.7em;
 	color: white;
@@ -156,18 +156,28 @@ main {
 }
 
 .cat__photo {
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
 	height: 200px;
 	width: 200px;
 	background-color: aquamarine;
 	border-radius: 20px;
 	box-shadow: 0 2px 10px rgba(0,0,0,0.3);	
-	transition: 500ms;
 }
 
 .cat__img {
-	height: 200px;
-	width: 200px;
-	transition: 300ms;
+	position: relative;
+	width: 180px;
+	height: 180px;
+	line-height: 180px;
+	min-height: 180px;
+	min-width: 180px;
+	object-fit: cover;
+	font-size: 0.8em;
+	color: darkgray;
+	text-align: center;
+	transition-duration: 300ms;
 }
 
 .cat__img:hover {
