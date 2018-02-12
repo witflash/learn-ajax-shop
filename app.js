@@ -2,7 +2,7 @@
 
 var setting = {
 	jsonPage: 1,
-	jsonPerPage: 20
+	jsonPerPage: 30
 };
 
 function requestItems(cb) {
@@ -173,7 +173,35 @@ var infinityScroll = {
 			if (!self.scrollOffset) {
 				self.setOffset();
 			};
-			document.addEventListener('scroll', function() { self.onScrollZone() });
+			self.eventScroll();
+		}
+	},
+
+	eventScroll: function() {
+		document.addEventListener('scroll', this.throttle(this.onScrollZone.bind(this), 250));
+	},
+
+	throttle: function (func, limit) {
+		let inThrottle;
+		console.log(this)
+		let self = this.throttle;
+		return function () {
+			const args = arguments;
+			const context = self;
+			console.log('inThrottle', inThrottle)
+			if (!inThrottle) {
+				// setTimeout(func, limit);
+				// inThrottle = true;
+				// console.log('inThrottle', inThrottle)
+				func.apply(context, args);
+				inThrottle = true;
+				setTimeout(() => inThrottle = false, limit);
+			} 
+			// else {
+			// 	clearTimeout(func, limit);
+			// 	console.log('Throttling...')
+			// 	inThrottle = false;
+			// }
 		}
 	},
 
@@ -184,11 +212,12 @@ var infinityScroll = {
 	},
 
 	onScrollZone: function() {
+		console.log('this', this)
 		let elementTop = this.getScrollTop();
 		console.log('elementTop', elementTop);
 		if (elementTop >= -this.scrollOffset) {
-			document.removeEventListener('scroll', this.onScrollZone);
-			console.log('Remove Event Listener');
+			// document.removeEventListener('scroll', this.onScrollZone);
+			// console.log('Remove Event Listener');
 			requestItems(createItems);			
 			// this.loadContent();
 			// this.setNextScroll();
@@ -206,16 +235,16 @@ var infinityScroll = {
 	// 		};
 	// },
 	
-	loadContent: function() {
-		requestItems(createItems);
+	// loadContent: function() {
+	// 	requestItems(createItems);
 		// this.moveScroll();
-	}
+	// }
 }
 
-function loadMoreContent() {
-	let bodyContent = document.querySelector('main');
-	let nextContent = document.querySelector('.catalog').cloneNode(true);
-}
+// function loadMoreContent() {
+// 	let bodyContent = document.querySelector('main');
+// 	let nextContent = document.querySelector('.catalog').cloneNode(true);
+// }
 
 
 infinityScroll.init();
