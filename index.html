@@ -65,14 +65,18 @@
 		</div>
 		<div class="cart__body"></div>
 		<div class="cart__footer">
-			<button class="button button_remove cart__button js-cart-remove"><span class="fa fa-trash"></span> Remove</button>
+			<button type="button" class="button button_remove cart__button js-cart-remove"><span class="fa fa-trash"></span> Remove</button>
 		</div>
 	</div>
 
 	<div style="display: none" id="cart-item-template">
 		<div class="cart__item">
 			<div class="cart__name"></div>
-			<div class="cart__amount"></div>
+			<div class="cart__control">
+				<button type="button" class="button button_minus js-item-decrease">-</button>
+				<span class="cart__amount"></span>
+				<button type="button" class="button button_plus js-item-increase">+</button>
+			</div>
 		</div>
 	</div>
 

@@ -101,6 +101,19 @@ main {
 	padding: 1em;
 }
 
+.button_minus {
+	padding: 0;
+	width: 2em;
+	height: 2em;
+}
+
+.button_plus {
+	padding: 0;
+	width: 2em;
+	height: 2em;
+	background-color: #0277bd;
+}
+
 .button:hover {
 	opacity: 0.8;
 }
@@ -297,7 +310,16 @@ main {
 }
 
 .cart__name {
-	padding-right: 5em;
+	/* padding-right: 5em; */
+}
+
+.cart__control {
+	display: flex;
+}
+
+.cart__amount {
+	width: 2em;
+	text-align: center;
 }
 
 .cart__footer {
