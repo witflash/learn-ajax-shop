@@ -9,16 +9,17 @@ const cart = {
 	count: 0,
 	items: {},
 	expireTime: 1000, // default value
-	emptyCartText: "No item in the cart :(<br>Please add the item(s) to the catalog.",
 	
 	class: {
 		main: '.cart',
-		visible: 'cart_visible',
 		toggle: '.js-cart-toggle',
 		close: '.js-cart-close',
+		remove: '.js-cart-remove',
 		name: '.cart__name',
 		amount: '.cart__amount',
 		body: '.cart__body',
+		visible: 'cart_visible',
+		empty: 'cart_empty',
 		itemTemplate: 'cart-item-template'
 	},
 
@@ -40,6 +41,7 @@ const cart = {
 		let _ = this;
 		let nodeToggle = document.querySelector(_.class.toggle);
 		let nodeClose = document.querySelector(_.class.close);
+		let nodeRemove = document.querySelector(_.class.remove);
 		_.applyUserArgs(args);
 		_.checkExpire();
 
@@ -53,16 +55,21 @@ const cart = {
 			}
 		}
 
-		_.items.toString = function() {
-			return JSON.stringify(this)
-		};
+		_.reset();
 
-		if (!_.count) {
-			document.querySelector(_.class.body).innerHTML = _.emptyCartText;
+		if (_.count) {
+			document.querySelector(_.class.main).classList.remove(_.class.empty);
 		};
-
+		
 		nodeToggle.addEventListener('click', _.toggle.bind(this));
 		nodeClose.addEventListener('click', _.toggle.bind(this));
+		nodeRemove.addEventListener('click', _.clearCart.bind(this));
+	},
+	
+	reset: function () {
+		this.items.toString = function() {
+			return JSON.stringify(this)
+		};
 	},
 
 	addItem: function (index, name) {
@@ -72,7 +79,7 @@ const cart = {
 		_.amount.bubble.textContent = _.count;
 		_.amount.isVisible();	
 		index = '#' + index;
-
+		
 		if (_.items[index]) {
 			_.items[index].amount++;
 			_.renderItemAmount(_.items[index].amount, index);
@@ -80,7 +87,8 @@ const cart = {
 			_.items[index] = {'name': name, 'amount': 1};
 			_.renderItem(index, name, 1);
 		};
-
+		
+		
 		localStorage.setItem(_.storage.items, _.items.toString());
 		localStorage.setItem(_.storage.lastChange, new Date());
 	},
@@ -96,11 +104,7 @@ const cart = {
 		cartItem.dataset.cartIndex = index;
 		cartItem.querySelector(_.class.name).innerHTML = name;
 		cartItem.querySelector(_.class.amount).innerHTML = amount;
-		
-		if (document.querySelector(_.class.body).innerHTML == _.emptyCartText) {
-			document.querySelector(_.class.body).innerHTML = '';
-		} 
-
+		document.querySelector(_.class.main).classList.remove(_.class.empty);
 		document.querySelector(_.class.body).appendChild(cartItem);
 	},
 
@@ -127,10 +131,19 @@ const cart = {
 
 		if (+dateNow - Date.parse(dateStorage) >= _.expireTime ) {
 			console.log('Cart expired!')
-			for (let key in _.storage) {
-				localStorage.removeItem(_.storage[key]);
-			}
+			_.clearCart();
 		}
+	},
+
+	clearCart: function () {
+		// let _ = this;
+		// let cartBody = document.querySelector(_.class.body);
+		for (let key in this.storage) {
+			localStorage.removeItem(this.storage[key]);
+		}
+		this.reset();
+		// cartBody.innerHTML = '';
+		// document.querySelector(_.class.main).classList.add(_.class.empty);		
 	}
 };
 

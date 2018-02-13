@@ -92,8 +92,13 @@ main {
 	border: none;
 	font-size: 0.8em;
 	text-transform: uppercase;
+	font-weight: bold;
 	color: white;
 	cursor: pointer;
+}
+
+.button_remove {
+	padding: 1em;
 }
 
 .button:hover {
@@ -270,8 +275,8 @@ main {
 }
 
 .cart__body {
-	padding: 2em;
-	max-height: 50vh;	
+	padding: 2em 2em 0 2em;
+	max-height: 40vh;	
 	overflow: auto;	
 }
 
@@ -295,11 +300,31 @@ main {
 	padding-right: 5em;
 }
 
+.cart__footer {
+	text-align: center;
+}
+
+.cart__button {
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
 .cart_visible {
 	top: 4em;
 	right: 2em;
 }
 
+.cart_empty .cart__body {
+	padding-bottom: 2em;
+}
+
+.cart_empty .cart__body:before {
+	content: "No item in the cart :(<br>Please add the item(s) to the catalog.";
+}
+
+.cart_empty .cart__footer {
+	display: none;
+}
 
 .infinity-scroll {
 	height: 0;
