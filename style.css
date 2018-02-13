@@ -319,7 +319,7 @@ main {
 }
 
 .cart_empty .cart__body:before {
-	content: "No item in the cart :(<br>Please add the item(s) to the catalog.";
+	content: "No item in the cart :( Please add the item(s) to the catalog.";
 }
 
 .cart_empty .cart__footer {
