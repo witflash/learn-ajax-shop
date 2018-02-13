@@ -1,31 +1,32 @@
 'use strict';
 
-const _setting = {
+const setting = {
 	jsonPage: 1,
 	jsonPerPage: 30,
-	emptyCartText: "No item in the cart :(<br>Please add the item(s) to the catalog.",
-};
-
-const _storage = {
-	get: {
-		cart: localStorage.getItem('userCartList'),
-		count: localStorage.getItem('userCartCount')
-	},
-	set: {
-		cart: function (list) {
-			localStorage.setItem('userCartList', list)
-		},
-		count: function(value) {
-			localStorage.setItem('userCartCount', value)
-		}
-	},
-	lastChange: new Date()
 };
 
 const cart = {
 	count: 0,
-	body: document.querySelector('.cart__body'),
-	itemTemplate: document.getElementById('cart-item-template').firstElementChild,
+	items: {},
+	expireTime: 1000, // default value
+	emptyCartText: "No item in the cart :(<br>Please add the item(s) to the catalog.",
+	
+	class: {
+		main: '.cart',
+		visible: 'cart_visible',
+		toggle: '.js-cart-toggle',
+		close: '.js-cart-close',
+		name: '.cart__name',
+		amount: '.cart__amount',
+		body: '.cart__body',
+		itemTemplate: 'cart-item-template'
+	},
+
+	storage: {
+		items: 'userCartList',
+		count: 'userCartCount',
+		lastChange: 'lastCartChange'
+	},
 
 	amount: {
 		bubble: document.querySelector('.js-cart-amount'),
@@ -34,81 +35,113 @@ const cart = {
 		}
 	},
 	
-	items: {},
 
-	init: function() {
-		let nodeToggle = document.querySelector('.js-cart-toggle');
-		let nodeClose = document.querySelector('.js-cart-close');
-		if (_storage.get.count) {
-			this.count = _storage.get.count;
-			this.amount.bubble.textContent = this.count;			
-			this.amount.isVisible();
-		}
-		if (_storage.get.cart) {
-			this.items = JSON.parse(_storage.get.cart);
-			for (let id in this.items) {
-				this.renderItem(id, this.items[id].name, this.items[id].amount);
+	init: function(args) {
+		let _ = this;
+		let nodeToggle = document.querySelector(_.class.toggle);
+		let nodeClose = document.querySelector(_.class.close);
+		_.applyUserArgs(args);
+		_.checkExpire();
+
+		if (localStorage.getItem(_.storage.count)) {
+			_.count = localStorage.getItem(_.storage.count);
+			_.amount.bubble.textContent = _.count;			
+			_.amount.isVisible();
+			_.items = JSON.parse(localStorage.getItem(_.storage.items));
+			for (let id in _.items) {
+				_.renderItem(id, _.items[id].name, _.items[id].amount);
 			}
-		};
-		this.items.toString = function() {
+		}
+
+		_.items.toString = function() {
 			return JSON.stringify(this)
 		};
 
-		if (!this.count) {
-			this.body.innerHTML = _setting.emptyCartText;
+		if (!_.count) {
+			document.querySelector(_.class.body).innerHTML = _.emptyCartText;
 		};
-		nodeToggle.addEventListener('click', this.toggle);
-		nodeClose.addEventListener('click', this.toggle);
+
+		nodeToggle.addEventListener('click', _.toggle.bind(this));
+		nodeClose.addEventListener('click', _.toggle.bind(this));
 	},
 
 	addItem: function (index, name) {
-		console.log('this', this)
-		this.count++;
-		_storage.set.count(this.count);
-		this.amount.bubble.textContent = this.count;
-		this.amount.isVisible();		
+		let _ = this;
+		_.count++;
+		localStorage.setItem(_.storage.count, _.count);
+		_.amount.bubble.textContent = _.count;
+		_.amount.isVisible();	
 		index = '#' + index;
-		if (this.items[index]) {
-			this.items[index].amount++;
-			this.renderItemAmount(this.items[index].amount, index);
+
+		if (_.items[index]) {
+			_.items[index].amount++;
+			_.renderItemAmount(_.items[index].amount, index);
 		} else {
-			this.items[index] = {'name': name, 'amount': 1};
-			this.renderItem(index, name, 1);
+			_.items[index] = {'name': name, 'amount': 1};
+			_.renderItem(index, name, 1);
 		};
-		_storage.set.cart(this.items.toString());
+
+		localStorage.setItem(_.storage.items, _.items.toString());
+		localStorage.setItem(_.storage.lastChange, new Date());
 	},
 
 	renderItemAmount: function (amount, index) {
 		let cartItem = document.querySelector('[data-cart-index=\"' + index + '\"]');
-		cartItem.querySelector('.cart__amount').innerHTML = amount;
+		cartItem.querySelector(this.class.amount).innerHTML = amount;
 	},
 
 	renderItem: function (index, name, amount) {
-		let cartItem = this.itemTemplate.cloneNode(true);
+		let _ = this;		
+		let cartItem = document.getElementById(_.class.itemTemplate).firstElementChild.cloneNode(true);
 		cartItem.dataset.cartIndex = index;
-		cartItem.querySelector('.cart__name').innerHTML = name;
-		cartItem.querySelector('.cart__amount').innerHTML = amount;
+		cartItem.querySelector(_.class.name).innerHTML = name;
+		cartItem.querySelector(_.class.amount).innerHTML = amount;
 		
-		if (this.body.innerHTML == _setting.emptyCartText) {
-			this.body.innerHTML = '';
+		if (document.querySelector(_.class.body).innerHTML == _.emptyCartText) {
+			document.querySelector(_.class.body).innerHTML = '';
 		} 
-		this.body.appendChild(cartItem);
+
+		document.querySelector(_.class.body).appendChild(cartItem);
 	},
 
 	toggle: function () {
-		let cartWindow = document.querySelector('.cart');
-		cartWindow.classList.toggle('cart_visible');	
+		let cartWindow = document.querySelector(this.class.main);
+		cartWindow.classList.toggle(this.class.visible);	
+	},
+
+	applyUserArgs: function (args) {
+		if (args) {
+			console.log('args', args)
+			for (let key in args) {
+				this[key] = args[key];
+			}
+		}
+	}, 
+
+	checkExpire: function () {
+		let _ = this;
+		let dateNow = new Date();
+		let dateStorage = localStorage.getItem(_.storage.lastChange);
+		
+		if (!dateStorage) { return };
+
+		if (+dateNow - Date.parse(dateStorage) >= _.expireTime ) {
+			console.log('Cart expired!')
+			for (let key in _.storage) {
+				localStorage.removeItem(_.storage[key]);
+			}
+		}
 	}
 };
 
 function requestItems(cb) {
 	var request = new XMLHttpRequest();
-	request.open('GET', `https://ma-cats-api.herokuapp.com/api/cats?page=${_setting.jsonPage}&per_page=${_setting.jsonPerPage}`, true);
+	request.open('GET', `https://ma-cats-api.herokuapp.com/api/cats?page=${setting.jsonPage}&per_page=${setting.jsonPerPage}`, true);
 	request.onload = function () {
 		if (request.status >= 200 && request.status < 400) {
 			var data = JSON.parse(request.responseText);
 			cb(data);
-			_setting.jsonPage++;
+			setting.jsonPage++;
 		} else {
 		}
 	};
@@ -225,5 +258,7 @@ var infinityScroll = {
 
 
 requestItems(createItems);
-cart.init();
+cart.init(
+	{expireTime: 5000}
+);
 infinityScroll.init();
