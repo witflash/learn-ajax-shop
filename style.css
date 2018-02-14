@@ -400,6 +400,15 @@ main {
 		min-height: 130px;
 		min-width: 130px;
 	}
+
+	.cat__price {
+		font-size: 0.6em;
+	}
+
+	.cat__info {
+		font-size: 0.8em;
+		flex-wrap: wrap;
+	}
 	
 }
 
