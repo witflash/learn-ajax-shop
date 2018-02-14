@@ -274,7 +274,7 @@ main {
 .cart {
 	position: fixed;
 	top: 5em;
-	right: -100%;
+	right: -1000%;
 	width: 280px;
 	background-color: white;	
 	box-shadow: -5px 5px 10px rgba(0,0,0,0.3), 0 0 10px rgba(0,0,0,0.3);
@@ -380,4 +380,41 @@ main {
 
 .infinity-scroll {
 	height: 0;
+}
+
+
+@media screen and (max-width: 480px)  {
+	.nav__list {
+		display: none;
+	}
+	
+	.cat__photo {
+		height: 150px;
+		width: 150px;
+	}
+
+	.cat__img {
+		width: 130px;
+		height: 130px;
+		line-height: 130px;
+		min-height: 130px;
+		min-width: 130px;
+	}
+	
+}
+
+@media screen and (min-width: 1024px)  {
+	.cat__photo {
+		height: 300px;
+		width: 300px;
+	}
+
+	.cat__img {
+		width: 280px;
+		height: 280px;
+		line-height: 280px;
+		min-height: 280px;
+		min-width: 280px;
+	}
+	
 }
