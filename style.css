@@ -251,6 +251,18 @@ main {
 	content: '$';
 }
 
+.cat__add {
+	transform: scale(0);
+	position: absolute;
+	width: 2em;
+	height: 2em;
+	top: 7%;
+	right: 7%;
+	border-radius: 100%;
+	filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.5));
+	transition: var(--delay-global);
+}
+
 .cat__info {
 	display: flex;
 	padding-left: 1em;
