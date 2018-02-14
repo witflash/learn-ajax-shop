@@ -8,6 +8,7 @@ const setting = {
 const cart = {
 	count: 0,
 	items: {},
+	maxAmount: 10, // max count for one item in cart
 	expireTime: 1000, // default value
 	
 	class: {
@@ -20,7 +21,7 @@ const cart = {
 		body: '.cart__body',
 		decrease: '.js-item-decrease',
 		increase: '.js-item-increase',
-		isActive: 'is-active',
+		isVisible: 'is-visible',
 		visible: 'cart_visible',
 		empty: 'cart_empty',
 		itemTemplate: 'cart-item-template',
@@ -59,6 +60,7 @@ const cart = {
 			_.amount.bubble.textContent = _.count;			
 			_.amount.isVisible();
 			_.items = JSON.parse(localStorage.getItem(_.storage.items));
+
 			for (let id in _.items) {
 				_.renderItem(id, _.items[id].name, _.items[id].amount);
 			}
@@ -83,29 +85,22 @@ const cart = {
 
 	addItem: function (index, name) {
 		let _ = this;
-		// let cartControl = document.querySelector('[data-cart-index=\"' + index + '\"]');		
 		if (_.items[index]) {
 			return
 		};
-
+		
 		_.items[index] = {'name': name, 'amount': 1};
 		_.renderItem(index, name, 1);
 		_.count++;
 		_.amount.isVisible();	
 		_.amount.bubble.textContent = _.count;
-		_.refreshStorage();
+		_.updateStorage();
 		
-		// cartControl.querySelector(_.class.increase).classList.add(_.class.isActive);
 		document.querySelector('[data-index=\"' + index + '\"]').classList.add(_.class.added);
 	},
 
-	renderItemAmount: function (amount, index) {
-		let cartItem = document.querySelector('[data-cart-index=\"' + index + '\"]');
-		cartItem.querySelector(this.class.amount).innerHTML = amount;
-	},
-
 	renderItem: function (index, name, amount) {
-		let _ = this;		
+		let _ = this;
 		let cartItem = document.getElementById(_.class.itemTemplate).firstElementChild.cloneNode(true);
 		let decrease = cartItem.querySelector(_.class.decrease);
 		let increase = cartItem.querySelector(_.class.increase);
@@ -113,11 +108,23 @@ const cart = {
 		cartItem.querySelector(_.class.name).innerHTML = name;
 		cartItem.querySelector(_.class.amount).innerHTML = amount;
 		document.querySelector(_.class.main).classList.remove(_.class.empty);
-
+		
 		decrease.addEventListener('click', _.decrease.bind(this, cartItem));
 		increase.addEventListener('click', _.increase.bind(this, cartItem));
-
+		
+		if (_.items[index].amount < _.maxAmount) {
+			increase.classList.add(_.class.isVisible);
+		};
+		if (_.items[index].amount > 1) {
+			decrease.classList.add(_.class.isVisible);
+		};
+		
 		document.querySelector(_.class.body).appendChild(cartItem);
+	},
+	
+	renderItemAmount: function (amount, index) {
+		let cartItem = document.querySelector('[data-cart-index=\"' + index + '\"]');
+		cartItem.querySelector(this.class.amount).innerHTML = amount;
 	},
 
 	decrease: function (cartItem) {
@@ -131,13 +138,18 @@ const cart = {
 		_.items[index].amount--;
 		_.amount.bubble.textContent = _.count;
 		_.renderItemAmount(_.items[index].amount, index);
-		_.refreshStorage();			
+		_.updateStorage();
+		
+		if (_.items[index].amount == 1) {
+			cartItem.querySelector(_.class.decrease).classList.remove(_.class.isVisible);
+		}
+		cartItem.querySelector(_.class.increase).classList.add(_.class.isVisible);		
 	},
 
 	increase: function (cartItem) {
 		let _ = this;
 		let index = cartItem.dataset.cartIndex;
-		if (_.items[index].amount >= 20) {
+		if (_.items[index].amount >= _.maxAmount) {
 			return
 		}
 
@@ -145,7 +157,16 @@ const cart = {
 		_.items[index].amount++;
 		_.amount.bubble.textContent = _.count;
 		_.renderItemAmount(_.items[index].amount, index);
-		_.refreshStorage();
+		_.updateStorage();
+
+		if ( _.items[index].amount > (_.maxAmount - 1) ) {
+			cartItem.querySelector(_.class.increase).classList.remove(_.class.isVisible);
+		}
+		cartItem.querySelector(_.class.decrease).classList.add(_.class.isVisible);
+	},
+
+	remove: function () {
+		
 	},
 
 	toggle: function () {
@@ -155,7 +176,6 @@ const cart = {
 
 	applyUserArgs: function (args) {
 		if (args) {
-			console.log('args', args)
 			for (let key in args) {
 				this[key] = args[key];
 			}
@@ -175,7 +195,7 @@ const cart = {
 		}
 	},
 
-	refreshStorage: function () {
+	updateStorage: function () {
 		let _ = this;
 		localStorage.setItem(_.storage.count, _.count);
 		localStorage.setItem(_.storage.items, _.items);
@@ -186,7 +206,6 @@ const cart = {
 		let _ = this;
 		let cart = document.querySelector(_.class.main);
 		let addedItems = document.querySelectorAll('.' + _.class.added);
-		console.log('addedItems', addedItems)
 		for (let key in _.storage) {
 			localStorage.removeItem(_.storage[key]);
 		};
@@ -229,13 +248,17 @@ function createItems(data) {
 
 function createItem(data, index) {
 	let item = document.getElementById('cat-template').firstElementChild.cloneNode(true);
-
+	
 	item.querySelector('.cat__name').innerHTML = data.name;
 	item.querySelector('.cat__category').innerHTML = data.category;
 	item.querySelector('.cat__price').innerHTML = data.price;
 	item.querySelector('.cat__img').setAttribute("src", data.img_url);
 	item.querySelector('.cat__img').setAttribute("alt", data.name + ' img');
 	item.dataset.index = '#' + data.id;
+	
+	if (cart.items[item.dataset.index]) {
+		item.classList.add(cart.class.added);
+	}
 
 	item.addEventListener('click', handleClick);
 
@@ -250,16 +273,10 @@ function handleClick() {
 
 
 // @TODO
-// LocalStorage
-// add expired
-
-// @TODO
-// with increase count/decrease count/remove (+)(x)
-// input type="number"
 // BEST: custom (-)______(+) (x)
 
 
-var infinityScroll = {
+const infinityScroll = {
 	scrollClass: '.js-on-scroll',
 	scrollZone: {},
 	scrollOffset: 0,
@@ -327,8 +344,8 @@ var infinityScroll = {
 }
 
 
-requestItems(createItems);
 cart.init(
 	{expireTime: 5000}
 );
+requestItems(createItems);
 infinityScroll.init();
