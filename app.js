@@ -21,9 +21,10 @@ const cart = {
 		body: '.cart__body',
 		decrease: '.js-item-decrease',
 		increase: '.js-item-increase',
+		deleteItem: '.js-item-delete',
 		isVisible: 'is-visible',
-		visible: 'cart_visible',
 		empty: 'cart_empty',
+		show: 'cart_visible',
 		itemTemplate: 'cart-item-template',
 
 		catalog: '.cat',
@@ -37,12 +38,15 @@ const cart = {
 	},
 
 	amount: {
-		bubble: document.querySelector('.js-cart-amount'),
+		bubbleNode: document.querySelector('.js-cart-amount'),
+		bubbleRender: function (count) {
+			this.bubbleNode.textContent = count;
+		},
 		isVisible: function () {
-			this.bubble.classList.add('amount_visible');
+			this.bubbleNode.classList.add('amount_visible');
 		},
 		isHide: function () {
-			this.bubble.classList.remove('amount_visible');
+			this.bubbleNode.classList.remove('amount_visible');
 		}
 	},
 	
@@ -57,7 +61,7 @@ const cart = {
 		
 		if (localStorage.getItem(_.storage.count)) {
 			_.count = localStorage.getItem(_.storage.count);
-			_.amount.bubble.textContent = _.count;			
+			_.amount.bubbleRender(_.count);			
 			_.amount.isVisible();
 			_.items = JSON.parse(localStorage.getItem(_.storage.items));
 
@@ -93,7 +97,7 @@ const cart = {
 		_.renderItem(index, name, 1);
 		_.count++;
 		_.amount.isVisible();	
-		_.amount.bubble.textContent = _.count;
+		_.amount.bubbleRender(_.count);
 		_.updateStorage();
 		
 		document.querySelector('[data-index=\"' + index + '\"]').classList.add(_.class.added);
@@ -104,6 +108,7 @@ const cart = {
 		let cartItem = document.getElementById(_.class.itemTemplate).firstElementChild.cloneNode(true);
 		let decrease = cartItem.querySelector(_.class.decrease);
 		let increase = cartItem.querySelector(_.class.increase);
+		let deleteItem = cartItem.querySelector(_.class.deleteItem);
 		cartItem.dataset.cartIndex = index;
 		cartItem.querySelector(_.class.name).innerHTML = name;
 		cartItem.querySelector(_.class.amount).innerHTML = amount;
@@ -111,6 +116,7 @@ const cart = {
 		
 		decrease.addEventListener('click', _.decrease.bind(this, cartItem));
 		increase.addEventListener('click', _.increase.bind(this, cartItem));
+		deleteItem.addEventListener('click', _.removeItem.bind(this, cartItem));
 		
 		if (_.items[index].amount < _.maxAmount) {
 			increase.classList.add(_.class.isVisible);
@@ -136,7 +142,7 @@ const cart = {
 
 		_.count--;
 		_.items[index].amount--;
-		_.amount.bubble.textContent = _.count;
+		_.amount.bubbleRender(_.count);
 		_.renderItemAmount(_.items[index].amount, index);
 		_.updateStorage();
 		
@@ -155,7 +161,7 @@ const cart = {
 
 		_.count++;
 		_.items[index].amount++;
-		_.amount.bubble.textContent = _.count;
+		_.amount.bubbleRender(_.count);
 		_.renderItemAmount(_.items[index].amount, index);
 		_.updateStorage();
 
@@ -165,13 +171,25 @@ const cart = {
 		cartItem.querySelector(_.class.decrease).classList.add(_.class.isVisible);
 	},
 
-	remove: function () {
-		
+	removeItem: function (cartItem) {
+		let _ = this;
+		let id = cartItem.dataset.cartIndex;
+		console.log('remove id', id)
+		_.count -= _.items[id].amount;
+		delete _.items[id];
+
+		document.querySelector('[data-index=\"' + id + '\"]').classList.remove(_.class.added);
+		cartItem.remove();
+		_.amount.bubbleRender(_.count);
+
+		if (_.count == 0) {
+			_.clearCart();
+		}
 	},
 
 	toggle: function () {
 		let cartWindow = document.querySelector(this.class.main);
-		cartWindow.classList.toggle(this.class.visible);	
+		cartWindow.classList.toggle(this.class.show);	
 	},
 
 	applyUserArgs: function (args) {
@@ -270,11 +288,6 @@ function handleClick() {
 	let name = this.querySelector('.cat__name').textContent;
 	cart.addItem(index, name);
 }
-
-
-// @TODO
-// BEST: custom (-)______(+) (x)
-
 
 const infinityScroll = {
 	scrollClass: '.js-on-scroll',
