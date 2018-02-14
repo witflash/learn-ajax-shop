@@ -20,9 +20,13 @@ const cart = {
 		body: '.cart__body',
 		decrease: '.js-item-decrease',
 		increase: '.js-item-increase',
+		isActive: 'is-active',
 		visible: 'cart_visible',
 		empty: 'cart_empty',
-		itemTemplate: 'cart-item-template'
+		itemTemplate: 'cart-item-template',
+
+		catalog: '.cat',
+		added: 'cat_added'
 	},
 
 	storage: {
@@ -77,33 +81,22 @@ const cart = {
 		};
 	},
 
-	reset: function () {
-		let _ = this;
-		_.count = 0;
-		_.amount.isHide;
-		_.items = {};
-		_.stringifyItems();
-	},
-
 	addItem: function (index, name) {
 		let _ = this;
-		index = '#' + index;
-
+		// let cartControl = document.querySelector('[data-cart-index=\"' + index + '\"]');		
 		if (_.items[index]) {
-			_.items[index].amount++;
-			_.renderItemAmount(_.items[index].amount, index);
-		} else {
-			_.items[index] = {'name': name, 'amount': 1};
-			_.renderItem(index, name, 1);
+			return
 		};
 
+		_.items[index] = {'name': name, 'amount': 1};
+		_.renderItem(index, name, 1);
 		_.count++;
-		localStorage.setItem(_.storage.count, _.count);
-		_.amount.bubble.textContent = _.count;
 		_.amount.isVisible();	
-				
-		localStorage.setItem(_.storage.items, _.items);
-		localStorage.setItem(_.storage.lastChange, new Date());
+		_.amount.bubble.textContent = _.count;
+		_.refreshStorage();
+		
+		// cartControl.querySelector(_.class.increase).classList.add(_.class.isActive);
+		document.querySelector('[data-index=\"' + index + '\"]').classList.add(_.class.added);
 	},
 
 	renderItemAmount: function (amount, index) {
@@ -130,16 +123,15 @@ const cart = {
 	decrease: function (cartItem) {
 		let _ = this;
 		let index = cartItem.dataset.cartIndex;
-		if (_.items[index].amount > 1) {
-			_.count--;
-			_.items[index].amount--;
-			
-			localStorage.setItem(_.storage.count, _.count);
-			_.amount.bubble.textContent = _.count;
-			_.renderItemAmount(_.items[index].amount, index);
-			localStorage.setItem(_.storage.items, _.items);
-			localStorage.setItem(_.storage.lastChange, new Date());				
+		if (_.items[index].amount <= 1) {
+			return
 		}
+
+		_.count--;
+		_.items[index].amount--;
+		_.amount.bubble.textContent = _.count;
+		_.renderItemAmount(_.items[index].amount, index);
+		_.refreshStorage();			
 	},
 
 	increase: function (cartItem) {
@@ -151,12 +143,9 @@ const cart = {
 
 		_.count++;
 		_.items[index].amount++;
-		
-		localStorage.setItem(_.storage.count, _.count);
 		_.amount.bubble.textContent = _.count;
 		_.renderItemAmount(_.items[index].amount, index);
-		localStorage.setItem(_.storage.items, _.items);
-		localStorage.setItem(_.storage.lastChange, new Date());
+		_.refreshStorage();
 	},
 
 	toggle: function () {
@@ -186,11 +175,20 @@ const cart = {
 		}
 	},
 
+	refreshStorage: function () {
+		let _ = this;
+		localStorage.setItem(_.storage.count, _.count);
+		localStorage.setItem(_.storage.items, _.items);
+		localStorage.setItem(_.storage.lastChange, new Date());
+	},
+
 	clearCart: function () {
 		let _ = this;
 		let cart = document.querySelector(_.class.main);
-		for (let key in this.storage) {
-			localStorage.removeItem(this.storage[key]);
+		let addedItems = document.querySelectorAll('.' + _.class.added);
+		console.log('addedItems', addedItems)
+		for (let key in _.storage) {
+			localStorage.removeItem(_.storage[key]);
 		};
 		_.count = 0;
 		_.amount.isHide();
@@ -199,6 +197,10 @@ const cart = {
 		
 		cart.classList.add(_.class.empty);
 		cart.querySelector(_.class.body).innerHTML = '';
+
+		addedItems.forEach( function(el) {
+			el.classList.remove(_.class.added);
+		})
 	}
 };
 
@@ -233,7 +235,7 @@ function createItem(data, index) {
 	item.querySelector('.cat__price').innerHTML = data.price;
 	item.querySelector('.cat__img').setAttribute("src", data.img_url);
 	item.querySelector('.cat__img').setAttribute("alt", data.name + ' img');
-	item.dataset.index = data.id;
+	item.dataset.index = '#' + data.id;
 
 	item.addEventListener('click', handleClick);
 

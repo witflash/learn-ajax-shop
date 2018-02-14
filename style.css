@@ -105,6 +105,7 @@ main {
 	padding: 0;
 	width: 2em;
 	height: 2em;
+	border-radius: 0.5em;
 }
 
 .button_plus {
@@ -112,6 +113,7 @@ main {
 	width: 2em;
 	height: 2em;
 	background-color: #0277bd;
+	border-radius: 0.5em;
 }
 
 .button:hover {
@@ -175,7 +177,15 @@ main {
 .cat {
 	position: relative;
 	cursor: pointer;
+}
 
+.cat_added {
+	opacity: 0.3;
+	cursor: default;
+}
+
+.cat_added .cat__img:hover {
+	transform: none;
 }
 
 .cat__photo {
@@ -309,9 +319,9 @@ main {
 	border: none;
 }
 
-.cart__name {
-	/* padding-right: 5em; */
-}
+/* .cart__name {
+	padding-right: 5em;
+} */
 
 .cart__control {
 	display: flex;
