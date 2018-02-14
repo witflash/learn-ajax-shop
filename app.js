@@ -3,6 +3,16 @@
 const setting = {
 	jsonPage: 1,
 	jsonPerPage: 30,
+
+	color: {
+		0: 'pink',
+		1: 'peachpuff',
+		2: 'khaki',
+		3: 'aquamarine',
+		4: 'lightskyblue',
+		5: 'thistle',
+		6: 'darkturquoise',
+	}
 };
 
 const cart = {
@@ -174,7 +184,6 @@ const cart = {
 	removeItem: function (cartItem) {
 		let _ = this;
 		let id = cartItem.dataset.cartIndex;
-		console.log('remove id', id)
 		_.count -= _.items[id].amount;
 		delete _.items[id];
 
@@ -272,12 +281,13 @@ function createItem(data, index) {
 	item.querySelector('.cat__price').innerHTML = data.price;
 	item.querySelector('.cat__img').setAttribute("src", data.img_url);
 	item.querySelector('.cat__img').setAttribute("alt", data.name + ' img');
+	item.querySelector('.cat__photo').style.backgroundColor = setting.color[randomNumber.get(0, 7)];
 	item.dataset.index = '#' + data.id;
 	
 	if (cart.items[item.dataset.index]) {
 		item.classList.add(cart.class.added);
 	}
-
+	
 	item.addEventListener('click', handleClick);
 
 	return item;
@@ -287,6 +297,21 @@ function handleClick() {
 	let index = this.getAttribute('data-index');
 	let name = this.querySelector('.cat__name').textContent;
 	cart.addItem(index, name);
+}
+
+const randomNumber = {
+	cache: null,
+	get: function (a, b) {  // a = start namber; b = end number (not include)
+			let self = this;
+			let random = Math.random() * (b - a);
+			random = Math.floor(random) + a;
+			if (random != self.cache) {
+				self.cache = random;
+				return random;
+			} else {
+				return self.get(a, b);
+			}
+	}
 }
 
 const infinityScroll = {
