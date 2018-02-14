@@ -19,7 +19,7 @@ const cart = {
 	count: 0,
 	items: {},
 	maxAmount: 10, // max count for one item in cart
-	expireTime: 1000, // default value
+	expireTime: 1440, // default value (minutes)
 	
 	class: {
 		main: '.cart',
@@ -216,7 +216,7 @@ const cart = {
 		
 		if (!dateStorage) { return };
 
-		if (+dateNow - Date.parse(dateStorage) >= _.expireTime ) {
+		if (+dateNow - Date.parse(dateStorage) >= _.expireTime * 60000 ) {
 			console.log('Cart expired!')
 			_.clearCart();
 		}
@@ -383,7 +383,7 @@ const infinityScroll = {
 
 
 cart.init(
-	{expireTime: 5000}
+	{expireTime: 10}
 );
 requestItems(createItems);
 infinityScroll.init();
