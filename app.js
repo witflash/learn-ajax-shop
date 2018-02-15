@@ -279,17 +279,18 @@ function createItem(data, index) {
 	item.querySelector('.cat__name').innerHTML = data.name;
 	item.querySelector('.cat__category').innerHTML = data.category;
 	item.querySelector('.cat__price').innerHTML = data.price;
-	item.querySelector('.cat__img').setAttribute("src", data.img_url);
+	// item.querySelector('.cat__img').setAttribute("src", data.img_url);
 	item.querySelector('.cat__img').setAttribute("alt", data.name + ' img');
 	item.querySelector('.cat__photo').style.backgroundColor = setting.color[randomNumber.get(0, 7)];
 	item.dataset.index = '#' + data.id;
+	item.querySelector('.cat__img').dataset.src = data.img_url;
 	
 	if (cart.items[item.dataset.index]) {
 		item.classList.add(cart.class.added);
 	}
 	
 	item.addEventListener('click', handleClick);
-
+	
 	return item;
 }
 
@@ -299,18 +300,40 @@ function handleClick() {
 	cart.addItem(index, name);
 }
 
+
+const lazyLoad = {
+	imgClass: '.cat__img',
+	
+	init: function() {
+
+
+
+		document.addEventListener('scroll', this.loadImage.bind(this));	
+	},
+	
+	loadImage: function() {
+		let items = document.querySelectorAll(this.imgClass);
+		items.forEach( function(img) {
+			let dataSrc = img.dataset.src;
+			console.log(`LazyLoad has done with ${dataSrc}`);
+			img.setAttribute('src', dataSrc);
+		})
+	}
+
+}
+
 const randomNumber = {
 	cache: null,
 	get: function (a, b) {  // a = start namber; b = end number (not include)
-			let self = this;
-			let random = Math.random() * (b - a);
-			random = Math.floor(random) + a;
-			if (random != self.cache) {
-				self.cache = random;
-				return random;
-			} else {
-				return self.get(a, b);
-			}
+		let self = this;
+		let random = Math.random() * (b - a);
+		random = Math.floor(random) + a;
+		if (random != self.cache) {
+			self.cache = random;
+			return random;
+		} else {
+			return self.get(a, b);
+		}
 	}
 }
 
@@ -387,3 +410,4 @@ cart.init(
 );
 requestItems(createItems);
 infinityScroll.init();
+lazyLoad.init();
