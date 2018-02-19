@@ -206,9 +206,9 @@ main {
 	cursor: default;
 }
 
-.cat__added:hover .cat__img {
-	transform: none;
-}
+/* .cat__added:hover .cat__add {
+	display: none;
+} */
 
 .cat__photo {
 	display: flex;
