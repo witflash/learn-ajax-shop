@@ -193,12 +193,16 @@ main {
 	cursor: pointer;
 }
 
+.cat:hover .cat__img {
+	transform: scale(0.9);
+}
+
 .cat_added {
 	opacity: 0.3;
 	cursor: default;
 }
 
-.cat_added .cat__img:hover {
+.cat_added:hover .cat__img {
 	transform: none;
 }
 
@@ -228,9 +232,6 @@ main {
 	transition-duration: var(--delay-global);
 }
 
-.cat__img:hover {
-	transform: scale(0.9);
-}
 
 .cat__price {
 	position: absolute;
