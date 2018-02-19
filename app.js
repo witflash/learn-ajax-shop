@@ -302,21 +302,36 @@ function handleClick() {
 
 
 const lazyLoad = {
-	imgClass: '.cat__img',
+	imgClass: 'cat__no-image',
+	loadComplete: true,
 	
 	init: function() {
 
 
 
-		document.addEventListener('scroll', this.loadImage.bind(this));	
+		document.addEventListener('scroll', this.checkImage.bind(this));	
 	},
 	
-	loadImage: function() {
-		let items = document.querySelectorAll(this.imgClass);
-		items.forEach( function(img) {
+	checkImage: function() {
+		let items = document.querySelectorAll(`.${this.imgClass}`);
+		console.log('items', items)
+		if (!items.length) {
+			console.log('All images loaded');
+			return
+		}
+		this.loadImage(items);
+	},
+		
+	loadImage: function(items) {
+		let self = this;
+		items.forEach( function(img, index, items) {
 			let dataSrc = img.dataset.src;
-			console.log(`LazyLoad has done with ${dataSrc}`);
-			img.setAttribute('src', dataSrc);
+			if (dataSrc) {
+				img.setAttribute('src', dataSrc);
+				console.log('Img added');
+				img.dataset.src = '';
+				img.classList.remove(self.imgClass);
+			}
 		})
 	}
 
