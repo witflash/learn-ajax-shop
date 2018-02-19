@@ -115,7 +115,7 @@ const cart = {
 
 	renderItem: function (index, name, amount) {
 		let _ = this;
-		let cartItem = document.getElementById(_.class.itemTemplate).firstElementChild.cloneNode(true);
+		let cartItem = document.getElementById(_.class.itemTemplate).content.firstElementChild.cloneNode(true);
 		let decrease = cartItem.querySelector(_.class.decrease);
 		let increase = cartItem.querySelector(_.class.increase);
 		let deleteItem = cartItem.querySelector(_.class.deleteItem);
@@ -274,7 +274,7 @@ function createItems(data) {
 }
 
 function createItem(data, index) {
-	let item = document.getElementById('cat-template').firstElementChild.cloneNode(true);
+	let item = document.getElementById('cat-template').content.firstElementChild.cloneNode(true);
 	
 	item.querySelector('.cat__name').innerHTML = data.name;
 	item.querySelector('.cat__category').innerHTML = data.category;
