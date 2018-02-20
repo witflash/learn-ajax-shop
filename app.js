@@ -271,6 +271,7 @@ function createItems(data) {
 		let newCat = createItem(cat, index);
 		document.querySelector('.catalog').appendChild(newCat);
 	});
+	lazyLoad.checkImage();
 }
 
 function createItem(data, index) {
@@ -303,38 +304,37 @@ function handleClick() {
 
 const lazyLoad = {
 	imgClass: 'cat__no-image',
-	loadComplete: true,
-	
+	offset: 300,
+
 	init: function() {
-
-
-
 		document.addEventListener('scroll', this.checkImage.bind(this));	
 	},
 	
 	checkImage: function() {
 		let items = document.querySelectorAll(`.${this.imgClass}`);
-		console.log('items', items)
-		if (!items.length) {
-			console.log('All images loaded');
+		let self = this;
+		if (!items.length) { // All images loaded
 			return
 		}
-		this.loadImage(items);
-	},
-		
-	loadImage: function(items) {
-		let self = this;
-		items.forEach( function(img, index, items) {
-			let dataSrc = img.dataset.src;
-			if (dataSrc) {
-				img.setAttribute('src', dataSrc);
-				console.log('Img added');
-				img.dataset.src = '';
-				img.classList.remove(self.imgClass);
+
+		items.forEach( function(img) {
+			let topImg = img.getBoundingClientRect().top;
+			let bottomWindow = document.documentElement.clientHeight;
+			if (topImg - bottomWindow <= self.offset) {
+				self.loadImage(img);
 			}
 		})
+	},
+		
+	loadImage: function(img) {
+		let dataSrc = img.dataset.src;
+		if (dataSrc) {
+			img.setAttribute('src', dataSrc);
+			console.log('Image loaded on deferred download');
+			img.dataset.src = '';
+			img.classList.remove(this.imgClass);
+		}
 	}
-
 }
 
 const randomNumber = {
