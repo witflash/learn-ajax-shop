@@ -419,6 +419,23 @@ const infinityScroll = {
 	
 }
 
+// ToDo: create show-hide Header
+const toggleHeader = {
+	headerClass: '.header',
+	hide: pass,
+
+	init: function() {
+		document.addEventListener('scroll', this.eventScroll.bind(this));
+		console.log('document.body', document.body)
+	},
+
+	eventScroll: function() {
+		let currentTop = document.body.getBoundingClientRect().y;
+		console.log('currentTop', currentTop);
+
+	}
+}
+
 
 cart.init(
 	{expireTime: 10}
@@ -426,3 +443,4 @@ cart.init(
 requestItems(createItems);
 infinityScroll.init();
 lazyLoad.init();
+toggleHeader.init();
