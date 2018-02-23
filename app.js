@@ -421,20 +421,63 @@ const infinityScroll = {
 
 // ToDo: create show-hide Header
 const toggleHeader = {
-	headerClass: '.header',
-	hide: pass,
+  /* START User Setting */
+  headerClass: ".header",
+  offsetHeader: 200,
+  offsetTop: 300,
+  /* END User Setting */
 
-	init: function() {
-		document.addEventListener('scroll', this.eventScroll.bind(this));
-		console.log('document.body', document.body)
-	},
+  headerNode: {},
+  isHide: false,
+  coordY: 0,
+  throttling: 250,
 
-	eventScroll: function() {
-		let currentTop = document.body.getBoundingClientRect().y;
-		console.log('currentTop', currentTop);
+  init: function() {
+    this.headerNode = document.querySelector(this.headerClass);
+	document.addEventListener("scroll", this.throttle( this.eventScroll.bind(this) ));
+  },
 
-	}
-}
+  eventScroll: function() {
+	let currentTop = document.body.getBoundingClientRect().y;
+
+    if (
+      currentTop < this.coordY && !this.isHide &&
+      currentTop < 0 - this.offsetTop
+    ) {
+	  this.hideHeader();
+	  console.log('Header is hidden');
+    } else if (currentTop > this.coordY && this.isHide) {
+	  this.showHeader();
+	  console.log("Header is shown");
+    }
+    this.coordY = currentTop;
+  },
+
+  hideHeader: function() {
+    this.headerNode.style.top = `-${this.offsetHeader}px`;
+    this.isHide = true;
+  },
+
+  showHeader: function() {
+    this.headerNode.style.top = "";
+    this.isHide = false;
+  },
+
+  throttle: function(func) {
+	let inThrottle;
+	let limit = this.throttling;
+    let self = this.throttle;
+    return function() {
+      const args = arguments;
+      const context = self;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => (inThrottle = false), limit);
+      }
+    };
+  }
+};
 
 
 cart.init(

@@ -23,9 +23,11 @@ main {
 .header {
 	margin: 0 auto;
 	position: fixed;
+	top: 0;
 	width: 100%;
 	z-index: 1;
 	box-shadow: 0 0 10px rgba(0,0,0,0.7);
+	transition-duration: 1s;
 }
 
 .header__logo {
