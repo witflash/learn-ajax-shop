@@ -419,7 +419,6 @@ const infinityScroll = {
 	
 }
 
-// ToDo: create show-hide Header
 const toggleHeader = {
   /* START User Setting */
   headerClass: ".header",
