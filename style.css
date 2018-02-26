@@ -195,7 +195,7 @@ main {
 	cursor: pointer;
 }
 
-.cat:not(.cat_added):hover .cat__add {
+.cat:not(.cat_added):hover .cat__plus {
 	transform: scale(1);
 }
 
@@ -203,6 +203,11 @@ main {
 	opacity: 0.3;
 	cursor: default;
 }
+
+/* .cat_added:hover .cat__remove {
+	transform: scale(1);
+} */
+
 
 .cat__photo {
 	display: flex;
@@ -249,17 +254,26 @@ main {
 	content: '$';
 }
 
-.cat__add {
+.cat__plus {
 	transform: scale(0);
 	position: absolute;
-	width: 2em;
-	height: 2em;
+	width: 20%;
+	height: 20%;
 	top: 7%;
 	right: 7%;
 	border-radius: 100%;
 	filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.5));
 	transition: var(--delay-global);
 }
+
+/* .cat__remove {
+	transform: scale(0);
+	position: absolute;
+	width: 50%;
+	height: 50%;
+	filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.5));
+	transition: var(--delay-global);
+} */
 
 .cat__info {
 	display: flex;
