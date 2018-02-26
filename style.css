@@ -193,12 +193,16 @@ main {
 	cursor: pointer;
 }
 
-.cat:hover .cat__img {
+/* .cat:hover .cat__img {
 	transform: scale(0.9);
-}
+} */
 
 .cat:hover .cat__add {
 	transform: scale(1);
+}
+
+.cat_added:hover .cat__add {
+	transform: none;
 }
 
 .cat_added {
@@ -206,9 +210,9 @@ main {
 	cursor: default;
 }
 
-/* .cat__added:hover .cat__add {
+.cat__added:hover .cat__add {
 	display: none;
-} */
+}
 
 .cat__photo {
 	display: flex;
