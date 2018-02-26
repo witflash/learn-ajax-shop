@@ -115,7 +115,7 @@ const cart = {
 
 	renderItem: function (index, name, amount) {
 		let _ = this;
-		let cartItem = document.getElementById(_.class.itemTemplate).firstElementChild.cloneNode(true);
+		let cartItem = document.getElementById(_.class.itemTemplate).content.firstElementChild.cloneNode(true);
 		let decrease = cartItem.querySelector(_.class.decrease);
 		let increase = cartItem.querySelector(_.class.increase);
 		let deleteItem = cartItem.querySelector(_.class.deleteItem);
@@ -271,25 +271,27 @@ function createItems(data) {
 		let newCat = createItem(cat, index);
 		document.querySelector('.catalog').appendChild(newCat);
 	});
+	lazyLoad.checkImage();
 }
 
 function createItem(data, index) {
-	let item = document.getElementById('cat-template').firstElementChild.cloneNode(true);
+	let item = document.getElementById('cat-template').content.firstElementChild.cloneNode(true);
 	
 	item.querySelector('.cat__name').innerHTML = data.name;
 	item.querySelector('.cat__category').innerHTML = data.category;
 	item.querySelector('.cat__price').innerHTML = data.price;
-	item.querySelector('.cat__img').setAttribute("src", data.img_url);
+	// item.querySelector('.cat__img').setAttribute("src", data.img_url);
 	item.querySelector('.cat__img').setAttribute("alt", data.name + ' img');
 	item.querySelector('.cat__photo').style.backgroundColor = setting.color[randomNumber.get(0, 7)];
 	item.dataset.index = '#' + data.id;
+	item.querySelector('.cat__img').dataset.src = data.img_url;
 	
 	if (cart.items[item.dataset.index]) {
 		item.classList.add(cart.class.added);
 	}
 	
 	item.addEventListener('click', handleClick);
-
+	
 	return item;
 }
 
@@ -299,18 +301,54 @@ function handleClick() {
 	cart.addItem(index, name);
 }
 
+
+const lazyLoad = {
+	imgClass: 'cat__no-image',
+	offset: 300,
+
+	init: function() {
+		document.addEventListener('scroll', this.checkImage.bind(this));	
+	},
+	
+	checkImage: function() {
+		let items = document.querySelectorAll(`.${this.imgClass}`);
+		let self = this;
+		if (!items.length) { // All images loaded
+			return
+		}
+
+		items.forEach( function(img) {
+			let topImg = img.getBoundingClientRect().top;
+			let bottomWindow = document.documentElement.clientHeight;
+			if (topImg - bottomWindow <= self.offset) {
+				self.loadImage(img);
+			}
+		})
+	},
+		
+	loadImage: function(img) {
+		let dataSrc = img.dataset.src;
+		if (dataSrc) {
+			img.setAttribute('src', dataSrc);
+			console.log('Image loaded on deferred download');
+			img.dataset.src = '';
+			img.classList.remove(this.imgClass);
+		}
+	}
+}
+
 const randomNumber = {
 	cache: null,
 	get: function (a, b) {  // a = start namber; b = end number (not include)
-			let self = this;
-			let random = Math.random() * (b - a);
-			random = Math.floor(random) + a;
-			if (random != self.cache) {
-				self.cache = random;
-				return random;
-			} else {
-				return self.get(a, b);
-			}
+		let self = this;
+		let random = Math.random() * (b - a);
+		random = Math.floor(random) + a;
+		if (random != self.cache) {
+			self.cache = random;
+			return random;
+		} else {
+			return self.get(a, b);
+		}
 	}
 }
 
@@ -381,9 +419,70 @@ const infinityScroll = {
 	
 }
 
+const toggleHeader = {
+  /* START User Setting */
+  headerClass: ".header",
+  offsetHeader: 200,
+  offsetTop: 300,
+  /* END User Setting */
+
+  headerNode: {},
+  isHide: false,
+  coordY: 0,
+  throttling: 250,
+
+  init: function() {
+    this.headerNode = document.querySelector(this.headerClass);
+	document.addEventListener("scroll", this.throttle( this.eventScroll.bind(this) ));
+  },
+
+  eventScroll: function() {
+	let currentTop = document.body.getBoundingClientRect().y;
+
+    if (
+      currentTop < this.coordY && !this.isHide &&
+      currentTop < 0 - this.offsetTop
+    ) {
+	  this.hideHeader();
+	  console.log('Header is hidden');
+    } else if (currentTop > this.coordY && this.isHide) {
+	  this.showHeader();
+	  console.log("Header is shown");
+    }
+    this.coordY = currentTop;
+  },
+
+  hideHeader: function() {
+    this.headerNode.style.top = `-${this.offsetHeader}px`;
+    this.isHide = true;
+  },
+
+  showHeader: function() {
+    this.headerNode.style.top = "";
+    this.isHide = false;
+  },
+
+  throttle: function(func) {
+	let inThrottle;
+	let limit = this.throttling;
+    let self = this.throttle;
+    return function() {
+      const args = arguments;
+      const context = self;
+      if (!inThrottle) {
+        func.apply(context, args);
+        inThrottle = true;
+        setTimeout(() => (inThrottle = false), limit);
+      }
+    };
+  }
+};
+
 
 cart.init(
 	{expireTime: 10}
 );
 requestItems(createItems);
 infinityScroll.init();
+lazyLoad.init();
+toggleHeader.init();

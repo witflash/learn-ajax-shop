@@ -23,9 +23,11 @@ main {
 .header {
 	margin: 0 auto;
 	position: fixed;
+	top: 0;
 	width: 100%;
 	z-index: 1;
 	box-shadow: 0 0 10px rgba(0,0,0,0.7);
+	transition-duration: 1s;
 }
 
 .header__logo {
@@ -193,6 +195,7 @@ main {
 	cursor: pointer;
 }
 
+<<<<<<< HEAD
 /* .cat:hover .cat__img {
 	transform: scale(0.9);
 } */
@@ -203,6 +206,10 @@ main {
 
 .cat_added:hover .cat__add {
 	transform: none;
+=======
+.cat:hover .cat__img {
+	transform: scale(0.9);
+>>>>>>> a89022c009e4247e1bb325d7cc3bee5c8623bc18
 }
 
 .cat_added {
@@ -210,8 +217,13 @@ main {
 	cursor: default;
 }
 
+<<<<<<< HEAD
 .cat__added:hover .cat__add {
 	display: none;
+=======
+.cat_added:hover .cat__img {
+	transform: none;
+>>>>>>> a89022c009e4247e1bb325d7cc3bee5c8623bc18
 }
 
 .cat__photo {
@@ -240,6 +252,10 @@ main {
 	transition-duration: var(--delay-global);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a89022c009e4247e1bb325d7cc3bee5c8623bc18
 .cat__price {
 	position: absolute;
 	top: 15px;
