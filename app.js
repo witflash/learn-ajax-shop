@@ -1,6 +1,11 @@
 'use strict';
 
+/* START CODE TO REFACTOR */
 let dragObject = {};
+let dropZone;
+let page = document.querySelector(".catalog");
+let dropable = document.querySelector(".dropable");
+let classSmooth = "catalog_smooth";
 
 document.addEventListener('mousedown', function(e) {
 	if (e.which != 1) return;
@@ -20,6 +25,7 @@ document.addEventListener('mousedown', function(e) {
 });
 
 document.addEventListener('mousemove', function(e) {
+	;
 	if (!dragObject.elem) return;
 
 	if (!dragObject.avatar) {
@@ -36,12 +42,28 @@ document.addEventListener('mousemove', function(e) {
 		let coords = getCoords(dragObject.avatar);
 		dragObject.shiftX = dragObject.downX - coords.left;
 		dragObject.shiftY = dragObject.downY - coords.top;
-
+		dropZone = document
+            .querySelector(".dropable")
+            .getBoundingClientRect();
+			
 		startDrag(e);
 	};
-
+	
 	dragObject.avatar.style.left = e.pageX - dragObject.shiftX + 'px';
 	dragObject.avatar.style.top = e.pageY - dragObject.shiftY + 'px';
+
+	dropable.style.visibility = "visible";
+
+	if (e.clientX > dropZone.x && 
+		e.clientX < dropZone.x + dropZone.width && 
+		e.clientY < dropZone.y + dropZone.width && 
+		e.clientY > dropZone.y) {
+		if (!page.dataset.smooth) {
+			smoothPage();
+		}
+    } else if (page.dataset.smooth) {
+		unSmoothPage();
+	};
 
 	return false;
 });
@@ -49,9 +71,19 @@ document.addEventListener('mousemove', function(e) {
 document.addEventListener('mouseup', function(e) {
 	if (dragObject.avatar) finishDrag(e);
 
+	dropable.style.visibility = "";	
 	dragObject = {};
 })
 
+function smoothPage() {
+	page.classList.add(classSmooth);
+	page.dataset.smooth = true;
+}
+
+function unSmoothPage() {
+	page.classList.remove(classSmooth);
+	page.dataset.smooth = "";
+}
 
 function createAvatar(e) {
 	let avatar = dragObject.elem;
@@ -96,9 +128,16 @@ function finishDrag(e) {
 	let dropItem = findDroppable(e);
 
 	if (dropItem) {
-		console.log('Drag Success');
+		let index = dragObject.avatar.getAttribute("data-index");
+		let name = dragObject.avatar.querySelector(".cat__name").textContent;
+		console.log('index: ', index);
+		console.log('name: ', name);
+		cart.addItem(index, name);
+
+
 		dragObject.avatar.rollback();
 		dragObject = {};
+        unSmoothPage();
 	} else {
 		console.log('Drag Unsuccess');
 		dragObject.avatar.rollback();
@@ -107,19 +146,15 @@ function finishDrag(e) {
 }
 
 function findDroppable(e) {
-	dragObject.avatar.hidden = true;
+	dragObject.avatar.style.display = 'none';
 	let elem = document.elementFromPoint(e.clientX, e.clientY);
-	dragObject.avatar.hidden = false;
-
+	dragObject.avatar.style.display = "";
 	if (elem == null) return null;
 
 	return elem.closest('.dropable');
 }
+/* END CODE TO REFACTOR */
 
-
-
-
-///////////////////////////////////
 
 const setting = {
 	jsonPage: 1,

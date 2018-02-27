@@ -58,6 +58,21 @@ main {
 	transform: scale(1.2);
 } 
 
+.header__cart-zone {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	visibility: hidden;
+	position: absolute;
+	right: 0;
+	height: 20vh;
+	width: 30vh;
+	border: dotted 2px var(--color-main);
+	border-radius: 30px;
+	background-color: rgba(255, 255, 255, 0.8);
+	color: var(--color-main);
+}
+
 .nav__list {
 	display: flex;
 	justify-content: space-around;
@@ -182,6 +197,11 @@ main {
 	flex-wrap: wrap;
 	justify-content: space-around;
 	padding: 10px;
+	transition-duration: var(--delay-global);	
+}
+
+.catalog_smooth {
+	opacity: 0.3;
 }
 
 .catalog__item {
