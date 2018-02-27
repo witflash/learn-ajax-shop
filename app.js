@@ -1,5 +1,126 @@
 'use strict';
 
+let dragObject = {};
+
+document.addEventListener('mousedown', function(e) {
+	if (e.which != 1) return;
+	
+	let elem = e.target.closest('.cat');
+	if (!elem) return;
+	for (let i = 0; i < elem.classList.length; i++) {
+		if (elem.classList[i] == 'cat_added') return;
+	};
+	
+	dragObject.elem = elem;
+	dragObject.downX = e.pageX;
+	dragObject.downY = e.pageY;
+	console.log('dragObject: ', dragObject);
+	e.preventDefault();
+	toggleHeader.showHeader();
+});
+
+document.addEventListener('mousemove', function(e) {
+	if (!dragObject.elem) return;
+
+	if (!dragObject.avatar) {
+		let moveX = e.pageX - dragObject.downX;
+		let moveY = e.pageY - dragObject.downY;
+		if ( Math.abs(moveX) < 10 && Math.abs(moveY) < 10 ) return;
+
+		dragObject.avatar = createAvatar(e);
+		if (!dragObject.avatar) {
+			dragObject = {};
+			return;
+		};
+
+		let coords = getCoords(dragObject.avatar);
+		dragObject.shiftX = dragObject.downX - coords.left;
+		dragObject.shiftY = dragObject.downY - coords.top;
+
+		startDrag(e);
+	};
+
+	dragObject.avatar.style.left = e.pageX - dragObject.shiftX + 'px';
+	dragObject.avatar.style.top = e.pageY - dragObject.shiftY + 'px';
+
+	return false;
+});
+
+document.addEventListener('mouseup', function(e) {
+	if (dragObject.avatar) finishDrag(e);
+
+	dragObject = {};
+})
+
+
+function createAvatar(e) {
+	let avatar = dragObject.elem;
+	let old = {
+		parent: avatar.parentNode,
+		nextSibling: avatar.nextSibling,
+		position: avatar.position || '',
+		left: avatar.left || '',
+		top: avatar.top || '',
+		zIndex: avatar.zIndex || ''
+	};
+
+	avatar.rollback = function() {
+		old.parent.insertBefore(avatar, old.nextSibling);
+		avatar.style.position = old.position;
+		avatar.style.left = old.left;
+		avatar.style.top = old.top;
+		avatar.style.zIndex = old.zIndex;
+	};
+
+	return avatar;
+};
+
+function getCoords(elem) {
+	let box = elem.getBoundingClientRect();
+
+	return {
+		top: box.top + pageYOffset,
+		left: box.left + pageXOffset
+	};
+}
+
+function startDrag(e) {
+	let avatar = dragObject.avatar;
+
+	document.body.appendChild(avatar);
+	avatar.style.zIndex = 9999;
+	avatar.style.position = 'absolute';
+}
+
+function finishDrag(e) {
+	let dropItem = findDroppable(e);
+
+	if (dropItem) {
+		console.log('Drag Success');
+		dragObject.avatar.rollback();
+		dragObject = {};
+	} else {
+		console.log('Drag Unsuccess');
+		dragObject.avatar.rollback();
+		dragObject = {};
+	}
+}
+
+function findDroppable(e) {
+	dragObject.avatar.hidden = true;
+	let elem = document.elementFromPoint(e.clientX, e.clientY);
+	dragObject.avatar.hidden = false;
+
+	if (elem == null) return null;
+
+	return elem.closest('.dropable');
+}
+
+
+
+
+///////////////////////////////////
+
 const setting = {
 	jsonPage: 1,
 	jsonPerPage: 30,
