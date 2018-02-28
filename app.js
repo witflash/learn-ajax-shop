@@ -1,155 +1,6 @@
-/* START CODE TO REFACTOR */
-let dragObject = {};
-let dropZone;
-const page = document.querySelector('.catalog');
-const dropable = document.querySelector('.dropable');
-const classSmooth = 'catalog_smooth';
-
-document.addEventListener('mousedown', (e) => {
-  if (e.which !== 1) return;
-
-  const elem = e.target.closest('.cat');
-  if (!elem) return;
-  for (let i = 0; i < elem.classList.length; i++) {
-    if (elem.classList[i] == 'cat_added') return;
-  }
-
-  dragObject.elem = elem;
-  dragObject.downX = e.pageX;
-  dragObject.downY = e.pageY;
-  console.log('dragObject: ', dragObject);
-  e.preventDefault();
-  toggleHeader.showHeader();
-});
-
-document.addEventListener('mousemove', (e) => {
-  if (!dragObject.elem) return;
-
-  if (!dragObject.avatar) {
-    const moveX = e.pageX - dragObject.downX;
-    const moveY = e.pageY - dragObject.downY;
-    if (Math.abs(moveX) < 10 && Math.abs(moveY) < 10) return;
-
-    dragObject.avatar = createAvatar(e);
-    if (!dragObject.avatar) {
-      dragObject = {};
-      return;
-    }
-
-    const coords = getCoords(dragObject.avatar);
-    dragObject.shiftX = dragObject.downX - coords.left;
-    dragObject.shiftY = dragObject.downY - coords.top;
-    dropZone = document.querySelector('.dropable').getBoundingClientRect();
-
-    startDrag(e);
-  }
-
-  dragObject.avatar.style.left = `${e.pageX - dragObject.shiftX}px`;
-  dragObject.avatar.style.top = `${e.pageY - dragObject.shiftY}px`;
-
-  dropable.style.visibility = 'visible';
-
-  if (
-    e.clientX > dropZone.x &&
-    e.clientX < dropZone.x + dropZone.width &&
-    e.clientY < dropZone.y + dropZone.width &&
-    e.clientY > dropZone.y
-  ) {
-    if (!page.dataset.smooth) {
-      smoothPage();
-    }
-  } else if (page.dataset.smooth) {
-    unSmoothPage();
-  }
-
-  return false;
-});
-
-document.addEventListener('mouseup', (e) => {
-  if (dragObject.avatar) finishDrag(e);
-
-  dropable.style.visibility = '';
-  dragObject = {};
-});
-
-function smoothPage() {
-  page.classList.add(classSmooth);
-  page.dataset.smooth = true;
-}
-
-function unSmoothPage() {
-  page.classList.remove(classSmooth);
-  page.dataset.smooth = '';
-}
-
-function createAvatar(e) {
-  const avatar = dragObject.elem;
-  const old = {
-    parent: avatar.parentNode,
-    nextSibling: avatar.nextSibling,
-    position: avatar.position || '',
-    left: avatar.left || '',
-    top: avatar.top || '',
-    zIndex: avatar.zIndex || '',
-  };
-
-  avatar.rollback = function () {
-    old.parent.insertBefore(avatar, old.nextSibling);
-    avatar.style.position = old.position;
-    avatar.style.left = old.left;
-    avatar.style.top = old.top;
-    avatar.style.zIndex = old.zIndex;
-  };
-
-  return avatar;
-}
-
-function getCoords(elem) {
-  const box = elem.getBoundingClientRect();
-
-  return {
-    top: box.top + pageYOffset,
-    left: box.left + pageXOffset,
-  };
-}
-
-function startDrag(e) {
-  const avatar = dragObject.avatar;
-
-  document.body.appendChild(avatar);
-  avatar.style.zIndex = 9999;
-  avatar.style.position = 'absolute';
-}
-
-function finishDrag(e) {
-  const dropItem = findDroppable(e);
-
-  if (dropItem) {
-    const index = dragObject.avatar.getAttribute('data-index');
-    const name = dragObject.avatar.querySelector('.cat__name').textContent;
-    console.log('index: ', index);
-    console.log('name: ', name);
-    cart.addItem(index, name);
-
-    dragObject.avatar.rollback();
-    dragObject = {};
-    unSmoothPage();
-  } else {
-    console.log('Drag Unsuccess');
-    dragObject.avatar.rollback();
-    dragObject = {};
-  }
-}
-
-function findDroppable(e) {
-  dragObject.avatar.style.display = 'none';
-  const elem = document.elementFromPoint(e.clientX, e.clientY);
-  dragObject.avatar.style.display = '';
-  if (elem == null) return null;
-
-  return elem.closest('.dropable');
-}
-/* END CODE TO REFACTOR */
+// TO DO:
+// - repair count from localStorage (type String)
+// - fix drop zone's size
 
 const setting = {
   jsonPage: 1,
@@ -225,9 +76,7 @@ const cart = {
       _.amount.isVisible();
       _.items = JSON.parse(localStorage.getItem(_.storage.items));
 
-      for (const id in _.items) {
-        _.renderItem(id, _.items[id].name, _.items[id].amount);
-      }
+      Object.keys(_.items).forEach(id => _.renderItem(id, _.items[id].name, _.items[id].amount));
     }
 
     _.stringifyItems();
@@ -242,20 +91,16 @@ const cart = {
   },
 
   stringifyItems() {
-    this.items.toString = function () {
-      return JSON.stringify(this);
-    };
+    this.items.toString = () => JSON.stringify(this.items);
   },
 
   addItem(index, name) {
     const _ = this;
-    if (_.items[index]) {
-      return;
-    }
+    if (_.items[index]) return;
 
     _.items[index] = { name, amount: 1 };
     _.renderItem(index, name, 1);
-    _.count++;
+    _.count += 1;
     _.amount.isVisible();
     _.amount.bubbleRender(_.count);
     _.updateStorage();
@@ -298,17 +143,15 @@ const cart = {
   decrease(cartItem) {
     const _ = this;
     const index = cartItem.dataset.cartIndex;
-    if (_.items[index].amount <= 1) {
-      return;
-    }
+    if (_.items[index].amount <= 1) return;
 
-    _.count--;
-    _.items[index].amount--;
+    _.count -= 1;
+    _.items[index].amount -= 1;
     _.amount.bubbleRender(_.count);
     _.renderItemAmount(_.items[index].amount, index);
     _.updateStorage();
 
-    if (_.items[index].amount == 1) {
+    if (_.items[index].amount === 1) {
       cartItem.querySelector(_.class.decrease).classList.remove(_.class.isVisible);
     }
     cartItem.querySelector(_.class.increase).classList.add(_.class.isVisible);
@@ -321,8 +164,8 @@ const cart = {
       return;
     }
 
-    _.count++;
-    _.items[index].amount++;
+    _.count += 1;
+    _.items[index].amount += 1;
     _.amount.bubbleRender(_.count);
     _.renderItemAmount(_.items[index].amount, index);
     _.updateStorage();
@@ -343,7 +186,7 @@ const cart = {
     cartItem.remove();
     _.amount.bubbleRender(_.count);
 
-    if (_.count == 0) {
+    if (_.count === 0) {
       _.clearCart();
     }
   },
@@ -355,9 +198,10 @@ const cart = {
 
   applyUserArgs(args) {
     if (args) {
-      for (const key in args) {
+      Object.keys(args).forEach((key) => {
         this[key] = args[key];
-      }
+        return this[key];
+      });
     }
   },
 
@@ -371,7 +215,6 @@ const cart = {
     }
 
     if (+dateNow - Date.parse(dateStorage) >= _.expireTime * 60000) {
-      console.log('Cart expired!');
       _.clearCart();
     }
   },
@@ -385,22 +228,36 @@ const cart = {
 
   clearCart() {
     const _ = this;
-    const cart = document.querySelector(_.class.main);
+    const cartNode = document.querySelector(_.class.main);
     const addedItems = document.querySelectorAll(`.${_.class.added}`);
-    for (const key in _.storage) {
-      localStorage.removeItem(_.storage[key]);
-    }
+    Object.keys(_.storage).forEach(key => localStorage.removeItem(_.storage[key]));
+
     _.count = 0;
     _.amount.isHide();
     _.items = {};
     _.stringifyItems();
 
-    cart.classList.add(_.class.empty);
-    cart.querySelector(_.class.body).innerHTML = '';
+    cartNode.classList.add(_.class.empty);
+    cartNode.querySelector(_.class.body).innerHTML = '';
 
     addedItems.forEach((el) => {
       el.classList.remove(_.class.added);
     });
+  },
+};
+
+const randomNumber = {
+  cache: null,
+  get(a, b) {
+    // a = start namber; b = end number (not include)
+    const self = this;
+    let random = Math.random() * (b - a);
+    random = Math.floor(random) + a;
+    if (random !== self.cache) {
+      self.cache = random;
+      return random;
+    }
+    return self.get(a, b);
   },
 };
 
@@ -413,45 +270,16 @@ function requestItems(cb) {
     }`,
     true,
   );
-  request.onload = function () {
+  request.onload = () => {
     if (request.status >= 200 && request.status < 400) {
       const data = JSON.parse(request.responseText);
       cb(data);
-      setting.jsonPage++;
-    } else {
+      setting.jsonPage += 1;
     }
   };
-  request.onerror = function () {};
+
+  request.onerror = () => 'Unable to load resources...';
   request.send();
-}
-
-function createItems(data) {
-  data.cats.forEach((cat, index) => {
-    const newCat = createItem(cat, index);
-    document.querySelector('.catalog').appendChild(newCat);
-  });
-  lazyLoad.checkImage();
-}
-
-function createItem(data, index) {
-  const item = document.getElementById('cat-template').content.firstElementChild.cloneNode(true);
-
-  item.querySelector('.cat__name').innerHTML = data.name;
-  item.querySelector('.cat__category').innerHTML = data.category;
-  item.querySelector('.cat__price').innerHTML = data.price;
-  // item.querySelector('.cat__img').setAttribute("src", data.img_url);
-  item.querySelector('.cat__img').setAttribute('alt', `${data.name} img`);
-  item.querySelector('.cat__photo').style.backgroundColor = setting.color[randomNumber.get(0, 7)];
-  item.dataset.index = `#${data.id}`;
-  item.querySelector('.cat__img').dataset.src = data.img_url;
-
-  if (cart.items[item.dataset.index]) {
-    item.classList.add(cart.class.added);
-  }
-
-  item.addEventListener('click', handleClick);
-
-  return item;
 }
 
 function handleClick() {
@@ -489,27 +317,39 @@ const lazyLoad = {
     const dataSrc = img.dataset.src;
     if (dataSrc) {
       img.setAttribute('src', dataSrc);
-      console.log('Image loaded on deferred download');
-      img.dataset.src = '';
+      img.setAttribute('data-src', '');
       img.classList.remove(this.imgClass);
     }
   },
 };
 
-const randomNumber = {
-  cache: null,
-  get(a, b) {
-    // a = start namber; b = end number (not include)
-    const self = this;
-    let random = Math.random() * (b - a);
-    random = Math.floor(random) + a;
-    if (random != self.cache) {
-      self.cache = random;
-      return random;
-    }
-    return self.get(a, b);
-  },
-};
+function createItem(data) {
+  const item = document.getElementById('cat-template').content.firstElementChild.cloneNode(true);
+
+  item.querySelector('.cat__name').innerHTML = data.name;
+  item.querySelector('.cat__category').innerHTML = data.category;
+  item.querySelector('.cat__price').innerHTML = data.price;
+  item.querySelector('.cat__img').setAttribute('alt', `${data.name} img`);
+  item.querySelector('.cat__photo').style.backgroundColor = setting.color[randomNumber.get(0, 7)];
+  item.dataset.index = `#${data.id}`;
+  item.querySelector('.cat__img').dataset.src = data.img_url;
+
+  if (cart.items[item.dataset.index]) {
+    item.classList.add(cart.class.added);
+  }
+
+  item.addEventListener('click', handleClick);
+
+  return item;
+}
+
+function createItems(data) {
+  data.cats.forEach((cat, index) => {
+    const newCat = createItem(cat, index);
+    document.querySelector('.catalog').appendChild(newCat);
+  });
+  lazyLoad.checkImage();
+}
 
 const infinityScroll = {
   scrollClass: '.js-on-scroll',
@@ -532,15 +372,10 @@ const infinityScroll = {
 
   setNextScroll() {
     const self = this;
-    window.onload = function () {
+    window.onload = () => {
       self.setScrollZone();
-      if (!self.scrollZone) {
-        console.log('There is no infinity scroll on the page');
-        return;
-      }
-      if (!self.scrollOffset) {
-        self.setOffset();
-      }
+      if (!self.scrollZone) return;
+      if (!self.scrollOffset) self.setOffset();
       self.eventScroll();
     };
   },
@@ -555,13 +390,14 @@ const infinityScroll = {
   throttle(func, limit) {
     let inThrottle;
     const self = this.throttle;
-    return function () {
-      const args = arguments;
+    return (...args) => {
       const context = self;
       if (!inThrottle) {
-        func.apply(context, args);
+        func.apply(context, ...args);
         inThrottle = true;
-        setTimeout(() => (inThrottle = false), limit);
+        setTimeout(() => {
+          inThrottle = false;
+        }, limit);
       }
     };
   },
@@ -602,10 +438,8 @@ const toggleHeader = {
 
     if (currentTop < this.coordY && !this.isHide && currentTop < 0 - this.offsetTop) {
       this.hideHeader();
-      console.log('Header is hidden');
     } else if (currentTop > this.coordY && this.isHide) {
       this.showHeader();
-      console.log('Header is shown');
     }
     this.coordY = currentTop;
   },
@@ -621,20 +455,168 @@ const toggleHeader = {
   },
 
   throttle(func) {
-    let inThrottle;
+    const context = this.throttle;
     const limit = this.throttling;
-    const self = this.throttle;
-    return function () {
-      const args = arguments;
-      const context = self;
+    let inThrottle;
+    return (...args) => {
       if (!inThrottle) {
-        func.apply(context, args);
+        func.apply(context, ...args);
         inThrottle = true;
-        setTimeout(() => (inThrottle = false), limit);
+        setTimeout(() => {
+          inThrottle = false;
+        }, limit);
       }
     };
   },
 };
+
+/* START CODE TO REFACTOR */
+const page = document.querySelector('.catalog');
+const dropable = document.querySelector('.dropable');
+const classSmooth = 'catalog_smooth';
+let dragObject = {};
+let dropZone;
+
+function smoothPage() {
+  page.classList.add(classSmooth);
+  page.dataset.smooth = true;
+}
+
+function unSmoothPage() {
+  page.classList.remove(classSmooth);
+  page.dataset.smooth = '';
+}
+
+function createAvatar() {
+  const avatar = dragObject.elem;
+  const old = {
+    parent: avatar.parentNode,
+    nextSibling: avatar.nextSibling,
+    position: avatar.position || '',
+    left: avatar.left || '',
+    top: avatar.top || '',
+    zIndex: avatar.zIndex || '',
+  };
+
+  avatar.rollback = () => {
+    old.parent.insertBefore(avatar, old.nextSibling);
+    avatar.style.position = old.position;
+    avatar.style.left = old.left;
+    avatar.style.top = old.top;
+    avatar.style.zIndex = old.zIndex;
+  };
+
+  return avatar;
+}
+
+function getCoords(elem) {
+  const box = elem.getBoundingClientRect();
+
+  return {
+    top: box.top + window.pageYOffset,
+    left: box.left + window.pageXOffset,
+  };
+}
+
+function startDrag() {
+  const { avatar } = dragObject;
+
+  document.body.appendChild(avatar);
+  avatar.style.zIndex = 9999;
+  avatar.style.position = 'absolute';
+}
+
+function findDroppable(e) {
+  dragObject.avatar.style.display = 'none';
+  const elem = document.elementFromPoint(e.clientX, e.clientY);
+  dragObject.avatar.style.display = '';
+  if (elem == null) return null;
+
+  return elem.closest('.dropable');
+}
+
+function finishDrag(e) {
+  const dropItem = findDroppable(e);
+
+  if (dropItem) {
+    const index = dragObject.avatar.getAttribute('data-index');
+    const name = dragObject.avatar.querySelector('.cat__name').textContent;
+    cart.addItem(index, name);
+
+    dragObject.avatar.rollback();
+    dragObject = {};
+    unSmoothPage();
+  } else {
+    dragObject.avatar.rollback();
+    dragObject = {};
+  }
+}
+
+document.addEventListener('mousedown', (e) => {
+  if (e.which !== 1) return;
+
+  const elem = e.target.closest('.cat');
+  if (!elem) return;
+  for (let i = 0; i < elem.classList.length; i += 1) {
+    if (elem.classList[i] === 'cat_added') return;
+  }
+
+  dragObject.elem = elem;
+  dragObject.downX = e.pageX;
+  dragObject.downY = e.pageY;
+  e.preventDefault();
+  toggleHeader.showHeader();
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!dragObject.elem) return;
+
+  if (!dragObject.avatar) {
+    const moveX = e.pageX - dragObject.downX;
+    const moveY = e.pageY - dragObject.downY;
+    if (Math.abs(moveX) < 10 && Math.abs(moveY) < 10) return;
+
+    dragObject.avatar = createAvatar(e);
+    if (!dragObject.avatar) {
+      dragObject = {};
+      return;
+    }
+
+    const coords = getCoords(dragObject.avatar);
+    dragObject.shiftX = dragObject.downX - coords.left;
+    dragObject.shiftY = dragObject.downY - coords.top;
+    dropZone = document.querySelector('.dropable').getBoundingClientRect();
+
+    startDrag(e);
+  }
+
+  dragObject.avatar.style.left = `${e.pageX - dragObject.shiftX}px`;
+  dragObject.avatar.style.top = `${e.pageY - dragObject.shiftY}px`;
+
+  dropable.style.visibility = 'visible';
+
+  if (
+    e.clientX > dropZone.x
+    && e.clientX < dropZone.x + dropZone.width
+    && e.clientY < dropZone.y + dropZone.width
+    && e.clientY > dropZone.y
+  ) {
+    if (!page.dataset.smooth) {
+      smoothPage();
+    }
+  } else if (page.dataset.smooth) {
+    unSmoothPage();
+  }
+});
+
+document.addEventListener('mouseup', (e) => {
+  if (dragObject.avatar) finishDrag(e);
+
+  dropable.style.visibility = '';
+  dragObject = {};
+});
+
+/* END CODE TO REFACTOR */
 
 cart.init({ expireTime: 10 });
 requestItems(createItems);
