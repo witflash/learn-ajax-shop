@@ -393,9 +393,9 @@ const infinityScroll = {
     return (...args) => {
       const context = self;
       if (!inThrottle) {
-        func.apply(context, ...args);
         inThrottle = true;
         setTimeout(() => {
+          func.apply(context, ...args);
           inThrottle = false;
         }, limit);
       }
@@ -404,6 +404,8 @@ const infinityScroll = {
 
   onScrollZone() {
     const elementTop = this.getScrollTop();
+    console.log('elementTop: ', elementTop);
+    console.log('this.scrollOffset: ', -this.scrollOffset);
     if (elementTop >= -this.scrollOffset) {
       requestItems(createItems);
     }
