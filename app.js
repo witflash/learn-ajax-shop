@@ -420,13 +420,14 @@ const toggleHeader = {
   /* START User Setting */
   headerClass: '.header',
   offsetHeader: 200,
-  offsetTop: 300,
+  offsetTop: 1000,
+  throttling: 250,
+  animationDuration: 300,
   /* END User Setting */
 
   headerNode: {},
   isHide: false,
   coordY: 0,
-  throttling: 250,
 
   init() {
     this.headerNode = document.querySelector(this.headerClass);
@@ -436,12 +437,22 @@ const toggleHeader = {
   eventScroll() {
     const currentTop = document.body.getBoundingClientRect().y;
 
-    if (currentTop < this.coordY && !this.isHide && currentTop < 0 - this.offsetTop) {
+    if (currentTop < this.coordY
+        && !this.isHide
+        && currentTop < 0 - this.offsetTop) {
       this.hideHeader();
     } else if (currentTop > this.coordY && this.isHide) {
       this.showHeader();
     }
     this.coordY = currentTop;
+
+    // fix hidden header for very fast scroll down-up
+    setTimeout(() => {
+      const bodyTop = -(document.body.getBoundingClientRect().y);
+      if (bodyTop < this.offsetTop && this.isHide) {
+        this.showHeader();
+      }
+    }, this.animationDuration);
   },
 
   hideHeader() {
