@@ -112,6 +112,10 @@ const cart = {
     document.querySelector(`[data-index="${index}"]`).classList.add(_.class.added);
   },
 
+  // getCost() {
+  //   this.items
+  // },
+
   renderItem(index, name, amount) {
     const _ = this;
     const cartItem = document
