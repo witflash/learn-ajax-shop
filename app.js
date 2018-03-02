@@ -2,7 +2,9 @@
 // 1. Calculator in Cart (Summ)
 // 2. Navigation - links
 // 3. Padding for plus and minus sign in cart
+// 4. Show cart then drag item
 // 5. Menu for mobile version
+// 6. Center default photo cat
 
 
 const setting = {
