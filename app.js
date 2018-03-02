@@ -1,10 +1,7 @@
 // TO DO:
 // 1. Calculator in Cart (Summ)
 // 2. Navigation - links
-// 3. Padding for plus and minus sign in cart
-// 4. Show cart then drag item
-// 5. Menu for mobile version
-// 6. Center default photo cat
+// 3. Menu for mobile version
 
 
 const setting = {
@@ -199,6 +196,11 @@ const cart = {
   toggle() {
     const cartWindow = document.querySelector(this.class.main);
     cartWindow.classList.toggle(this.class.show);
+  },
+
+  show() {
+    const cartWindow = document.querySelector(this.class.main);
+    cartWindow.classList.add(this.class.show);
   },
 
   applyUserArgs(args) {
@@ -603,13 +605,14 @@ document.addEventListener('mousemove', (e) => {
     dragObject.shiftY = dragObject.downY - coords.top;
     dropZone = document.querySelector('.dropable').getBoundingClientRect();
 
+    dropable.style.visibility = 'visible';
+    cart.show();
     startDrag(e);
   }
 
   dragObject.avatar.style.left = `${e.pageX - dragObject.shiftX}px`;
   dragObject.avatar.style.top = `${e.pageY - dragObject.shiftY}px`;
 
-  dropable.style.visibility = 'visible';
 
   if (
     e.clientX > dropZone.x
