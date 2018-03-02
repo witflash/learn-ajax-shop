@@ -410,9 +410,23 @@ main {
 }
 
 .infinity-scroll {
-	height: 0;
+	text-align: center;
 }
 
+.donut-loader {
+	display: inline-block;
+	border: 4px solid rgba(0, 0, 0, 0.1);
+	border-left-color: var(--color-main);
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: donut-spin 1.2s linear infinite;
+}
+
+@keyframes donut-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 @media screen and (max-width: 480px)  {
 	.nav__list {
