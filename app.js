@@ -2,7 +2,6 @@
 // 1. Calculator in Cart (Summ)
 // 2. Navigation - links
 // 3. Padding for plus and minus sign in cart
-// 4. Fix cat's price (from back in cents)
 // 5. Menu for mobile version
 
 
@@ -332,7 +331,7 @@ function createItem(data) {
 
   item.querySelector('.cat__name').innerHTML = data.name;
   item.querySelector('.cat__category').innerHTML = data.category;
-  item.querySelector('.cat__price').innerHTML = data.price;
+  item.querySelector('.cat__price').innerHTML = (data.price / 100.00).toFixed(2);
   item.querySelector('.cat__img').setAttribute('alt', `${data.name} img`);
   item.querySelector('.cat__photo').style.backgroundColor = setting.color[randomNumber.get(0, 7)];
   item.dataset.index = `#${data.id}`;
@@ -348,8 +347,8 @@ function createItem(data) {
 }
 
 function createItems(data) {
-  data.cats.forEach((cat, index) => {
-    const newCat = createItem(cat, index);
+  data.cats.forEach((cat) => {
+    const newCat = createItem(cat);
     document.querySelector('.catalog').appendChild(newCat);
   });
   lazyLoad.checkImage();
