@@ -1,6 +1,11 @@
 // TO DO:
-// - repair count from localStorage (type String)
-// - fix drop zone's size
+// 1. Calculator in Cart (Summ)
+// 2. Navigation - links
+// 3. Padding for plus and minus sign in cart
+// 4. Fix cat's price (from back in cents)
+// 5. Menu for mobile version
+// 6. Fix coord cart-zone
+
 
 const setting = {
   jsonPage: 1,
@@ -404,8 +409,6 @@ const infinityScroll = {
 
   onScrollZone() {
     const elementTop = this.getScrollTop();
-    console.log('elementTop: ', elementTop);
-    console.log('this.scrollOffset: ', -this.scrollOffset);
     if (elementTop >= -this.scrollOffset) {
       requestItems(createItems);
     }
@@ -495,7 +498,7 @@ function smoothPage() {
   page.dataset.smooth = true;
 }
 
-function unSmoothPage() {
+function unsmoothPage() {
   page.classList.remove(classSmooth);
   page.dataset.smooth = '';
 }
@@ -558,7 +561,7 @@ function finishDrag(e) {
 
     dragObject.avatar.rollback();
     dragObject = {};
-    unSmoothPage();
+    unsmoothPage();
   } else {
     dragObject.avatar.rollback();
     dragObject = {};
@@ -599,6 +602,7 @@ document.addEventListener('mousemove', (e) => {
     dragObject.shiftX = dragObject.downX - coords.left;
     dragObject.shiftY = dragObject.downY - coords.top;
     dropZone = document.querySelector('.dropable').getBoundingClientRect();
+    console.log('dropZone: ', dropZone);
 
     startDrag(e);
   }
@@ -611,14 +615,14 @@ document.addEventListener('mousemove', (e) => {
   if (
     e.clientX > dropZone.x
     && e.clientX < dropZone.x + dropZone.width
-    && e.clientY < dropZone.y + dropZone.width
     && e.clientY > dropZone.y
+    && e.clientY < dropZone.y + dropZone.height
   ) {
     if (!page.dataset.smooth) {
       smoothPage();
     }
   } else if (page.dataset.smooth) {
-    unSmoothPage();
+    unsmoothPage();
   }
 });
 
