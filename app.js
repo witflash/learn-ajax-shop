@@ -21,6 +21,7 @@ const setting = {
 
 const cart = {
   count: 0,
+  totalCost: 0,
   items: {},
   maxAmount: 10, // max count for one item in cart
   expireTime: 1440, // default value (minutes)
@@ -33,6 +34,7 @@ const cart = {
     name: '.cart__name',
     amount: '.cart__amount',
     body: '.cart__body',
+    cost: '.cart__total',
     decrease: '.js-item-decrease',
     increase: '.js-item-increase',
     deleteItem: '.js-item-delete',
@@ -96,11 +98,11 @@ const cart = {
     this.items.toString = () => JSON.stringify(this.items);
   },
 
-  addItem(index, name) {
+  addItem(index, name, price) {
     const _ = this;
     if (_.items[index]) return;
 
-    _.items[index] = { name, amount: 1 };
+    _.items[index] = { name, amount: 1, price };
     _.renderItem(index, name, 1);
     _.count += 1;
     _.amount.isVisible();
@@ -292,7 +294,8 @@ function requestItems(cb) {
 function handleClick() {
   const index = this.getAttribute('data-index');
   const name = this.querySelector('.cat__name').textContent;
-  cart.addItem(index, name);
+  const price = this.querySelector('.cat__price').textContent;
+  cart.addItem(index, name, price);
 }
 
 const lazyLoad = {

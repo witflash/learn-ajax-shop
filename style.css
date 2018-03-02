@@ -407,12 +407,20 @@ main {
 }
 
 .cart__footer {
+	padding: 1em 2em;
 	text-align: center;
 }
 
-.cart__button {
-	margin-top: 2em;
-	margin-bottom: 2em;
+.cart__cost {
+	margin-bottom: 1em;
+	width: 100%;
+	text-align: right;
+}
+
+.cart__total {
+	font-size: 1.1em;
+	font-weight: bold;
+	color: var(--color-main);
 }
 
 .cart_visible {
