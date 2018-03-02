@@ -71,7 +71,7 @@ const cart = {
     _.checkExpire();
 
     if (localStorage.getItem(_.storage.count)) {
-      _.count = localStorage.getItem(_.storage.count);
+      _.count = +localStorage.getItem(_.storage.count);
       _.amount.bubbleRender(_.count);
       _.amount.isVisible();
       _.items = JSON.parse(localStorage.getItem(_.storage.items));
