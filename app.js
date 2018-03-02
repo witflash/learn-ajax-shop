@@ -4,7 +4,6 @@
 // 3. Padding for plus and minus sign in cart
 // 4. Fix cat's price (from back in cents)
 // 5. Menu for mobile version
-// 6. Fix coord cart-zone
 
 
 const setting = {
@@ -602,7 +601,6 @@ document.addEventListener('mousemove', (e) => {
     dragObject.shiftX = dragObject.downX - coords.left;
     dragObject.shiftY = dragObject.downY - coords.top;
     dropZone = document.querySelector('.dropable').getBoundingClientRect();
-    console.log('dropZone: ', dropZone);
 
     startDrag(e);
   }

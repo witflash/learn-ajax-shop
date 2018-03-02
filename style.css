@@ -306,15 +306,15 @@ main {
 	justify-content: space-around;
 	align-items: center;
 	visibility: hidden;
-	position: fixed;
-	top: 8em;
-	right: 3em;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
 	z-index: 10;
-	height: 20vh;
-	width: 200px;
 	border: dotted 2px var(--color-main);
-	border-radius: 30px;
-	background-color: rgba(255, 255, 255, 0.8);
+	background-color: rgba(255, 255, 255, 0.9);
 	color: var(--color-main);
 }
 
@@ -360,6 +360,7 @@ main {
 }
 
 .cart__body {
+	position: relative;
 	padding: 2em 2em 0 2em;
 	max-height: 40vh;	
 	overflow: auto;	
